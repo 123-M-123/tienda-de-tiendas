@@ -1,0 +1,10 @@
+{
+  "workbench.colorTheme": "Atom One Dark",
+  "workbench.iconTheme": "vs-minimal",
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#3d1813",
+    "sideBar.background": "#3d1813",
+    "titleBar.activeBackground": "#3d1813"
+  },
+  "window.title": "TIENDA DE TIENDAS"
+}
