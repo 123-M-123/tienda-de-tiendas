@@ -3,10 +3,14 @@ import { C } from '@/styles/colores'
 import { CarritoProvider, useCarrito } from './context/CarritoContext'
 import Header from './components/Header'
 import HeroSection from '@/app/components/HeroSection'
-import ProductosSection from '@/app/components/ProductosSection'
+
 import CarritoPanel from '@/app/components/CarritoPanel'
 import ModalImagen from '@/app/components/ModalImagen'
-import EnviosSection from '@/app/components/EnviosSection'
+
+import Formulario from "@/components/Formulario";
+
+
+
 
 function Toast() {
   const { notif } = useCarrito()
@@ -85,9 +89,10 @@ function AppContent() {
     <div suppressHydrationWarning className="app-content">
       <Header />
       <HeroSection />
-      <ProductosSection />
-      <EnviosSection />
+      
+      
       <Footer />
+      <Formulario />
       <CarritoPanel />
       <ModalImagen />
       <Toast />
