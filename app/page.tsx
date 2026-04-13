@@ -47,51 +47,61 @@ function Toast() {
   )
 }
 
-function Footer() {
-  return (
-    <footer style={{
-      background: C.vino,
-      color: C.crema,
-      textAlign: 'center',
-      padding: '2rem 1.5rem',
-      marginTop: '3rem',
-      borderTop: `3px solid ${C.naranja}`,
-    }}>
-      <p style={{ margin: 0, fontSize: '0.85rem' }}>
-        <span style={{ color: C.naranjaPale, fontWeight: 700 }}>
-          MB Compras — Bazar & Regalos
-        </span>
-      </p>
-      <p style={{ margin: '0.5rem 0', fontSize: '0.8rem', opacity: 0.85 }}>
-        📍 Flores, CABA &nbsp;|&nbsp; 📅 Entregas viernes y sábados
-      </p>
-      <p style={{ margin: '0.5rem 0', fontSize: '0.8rem' }}>
-        
-      </p>
-      <p style={{ margin: '1.2rem 0 0', fontSize: '0.85rem', opacity: 0.5 }}>
-        © {new Date().getFullYear()} Todos los derechos reservados {' '}
-        <span style={{ color: C.naranjaPale }}>
-          <br />
-          Diseño web: Marcos Marti
-        </span>
-      </p>
-      <a href="mailto:marcosmarti1980@gmail.com"
-          style={{ color: C.gris, textDecoration: 'none', fontSize: '0.70rem', fontWeight: 400 }}>
-           Si queres una web como esta <br />
-           sos emprendedor ✉️ contactame
-        </a>
-    </footer>
-  )
-}
+
 
 function AppContent() {
   return (
     <div suppressHydrationWarning className="app-content">
       <Header />
       <HeroSection />
+      <section className="py-20 px-6 text-center max-w-4xl mx-auto">
+  
+  <h2 className="text-3xl md:text-4xl font-bold mb-6">
+    ¿Estás invirtiendo o solo gastando?
+  </h2>
+
+  <p className="text-lg mb-10">
+    La mayoría de las plataformas te cobran todos los meses.  
+    Eso no es una inversión… es un gasto constante.
+  </p>
+
+  <div className="grid md:grid-cols-2 gap-6">
+
+    {/* GASTO */}
+    <div className="border rounded-xl p-6">
+      <h3 className="text-xl font-bold mb-4">❌ Otras plataformas</h3>
+      <ul className="space-y-2 text-left">
+        <li>Pagos mensuales</li>
+        <li>Comisiones por venta</li>
+        <li>Nunca deja de costar</li>
+      </ul>
+      <p className="mt-4 font-semibold">
+        👉 Es un gasto constante
+      </p>
+    </div>
+
+    {/* INVERSIÓN */}
+    <div className="border rounded-xl p-6">
+      <h3 className="text-xl font-bold mb-4">✔ Tienda de Tiendas</h3>
+      <ul className="space-y-2 text-left">
+        <li>Un solo pago</li>
+        <li>Sin comisiones</li>
+        <li>La tienda es tuya</li>
+      </ul>
+      <p className="mt-4 font-semibold">
+        👉 Es una inversión
+      </p>
+    </div>
+
+  </div>
+
+  <p className="mt-10 text-xl font-bold">
+    Pagás una vez. Vendés sin comisiones para siempre.
+  </p>
+
+</section>
       
       
-      <Footer />
       <Formulario />
       <CarritoPanel />
       <ModalImagen />
