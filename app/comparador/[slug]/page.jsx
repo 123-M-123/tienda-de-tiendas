@@ -19,6 +19,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default function Page({ params }) {
+    console.log("TOTAL PAGINAS:", comparativas.length);
   const data = comparativas.find((c) => c.slug === params.slug);
 
   if (!data) return notFound();
@@ -33,11 +34,11 @@ export default function Page({ params }) {
         </h1>
 
         <p className="text-lg mb-6">
-          ¿Conviene usar {data.competitor} o tener una tienda sin comisiones?
+          ¿Conviene usar {data.competitor} o tener una tienda sin comisiones (como TIENDA DE TIENDAS))?
         </p>
 
-        <a
-          href="https://wa.me/XXXXXXXXXXX"
+    
+          <a href="https://wa.me/5491153778475?text=Hola%2C%20quiero%20crear%20mi%20tienda%20online%20con%20Tienda%20de%20Tiendas.%20Ya%20tengo%20algunos%20datos%20preparados%20y%20me%20interesa%20una%20web%20sin%20comisiones%20con%20pago%20%C3%BAnico.%20%C2%BFPod%C3%A9s%20pasarme%20info%20sobre%20tiempos%2C%20opciones%20de%20dise%C3%B1o%20y%20c%C3%B3mo%20arrancamos%3F"
           className="bg-black text-white px-6 py-3 rounded-xl"
         >
           👉 Crear mi tienda
@@ -64,7 +65,7 @@ export default function Page({ params }) {
         </h2>
 
         <p className="text-lg">
-          Con una tienda propia:
+          Con la tuya propia (de TIENDA DE TIENDAS):
         </p>
 
         <ul className="mt-4 space-y-2">
@@ -77,10 +78,10 @@ export default function Page({ params }) {
       {/* CTA */}
       <section className="py-20 text-center">
         <a
-          href="https://wa.me/XXXXXXXXXXX"
+          href="https://tienda-de-tiendas.vercel.app"
           className="bg-black text-white px-8 py-4 rounded-xl"
         >
-          👉 Empezar ahora
+          👉 contacta a traves del formulario
         </a>
       </section>
 

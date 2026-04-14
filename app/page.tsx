@@ -73,7 +73,7 @@ function AppContent() {
       <ul className="space-y-2 text-left">
         <li>Pagos mensuales</li>
         <li>Comisiones por venta</li>
-        <li>Nunca deja de costar</li>
+        <li>El diseño es de ellos</li>
       </ul>
       <p className="mt-4 font-semibold">
         👉 Es un gasto constante

@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export default function Formulario() {
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState<any>({});
 
   const handleChange = (e: any) => {
     const { name, value, type, checked } = e.target;
@@ -23,12 +23,47 @@ export default function Formulario() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(form);
-    alert("Formulario enviado");
+
+    const mensaje = `
+🚀 Nuevo cliente TIENDA DE TIENDAS
+
+Nombre: ${form.nombre}
+Contacto: ${form.contacto}
+Ubicación: ${form.ubicacion}
+Rubro: ${form.rubro}
+
+Productos: ${form.cantidad}
+Categorías: ${form.categorias}
+
+Logo: ${form.logo}
+Fotos: ${form.fotos}
+
+Envíos: ${form.envios}
+Correos: ${form.correo}
+
+Pagos: ${form.pagos}
+Pago servicio: ${form.pago_servicio}
+
+Componentes: ${form.componentes}
+Redes: ${form.redes}
+    `;
+
+    const url = `https://wa.me/5491153778475?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, "_blank");
   };
 
-  const Box = ({ title }: any) => (
-    <h3 className="text-lg font-bold mt-8 mb-2">{title}</h3>
+ const Box = ({ title, children }: any) => (
+  <details className="border rounded-xl p-4">
+    <summary className="font-bold cursor-pointer">{title}</summary>
+    <div className="mt-4 space-y-3">{children}</div>
+  </details>
+)
+
+  const Section = ({ title, children }: any) => (
+    <details className="border rounded-xl p-4">
+      <summary className="font-bold cursor-pointer">{title}</summary>
+      <div className="mt-4 space-y-3">{children}</div>
+    </details>
   );
 
   return (
@@ -42,127 +77,139 @@ export default function Formulario() {
         ⚠ Solo trabajamos con personas listas para vender
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
 
         {/* DATOS */}
-        <Box title="Datos del negocio" />
-
-        <input name="nombre" placeholder="Nombre" onChange={handleChange} className="input" />
-        <input name="contacto" placeholder="WhatsApp o Email" onChange={handleChange} className="input" />
-        <input name="ubicacion" placeholder="Ubicación (ciudad)" onChange={handleChange} className="input" />
-        <input name="rubro" placeholder="Rubro del negocio" onChange={handleChange} className="input" />
-
-        <input name="datos_publicos" placeholder="¿Qué datos querés mostrar en la web?" onChange={handleChange} className="input" />
+        <Section title="📊 Datos del negocio">
+          <input name="nombre" placeholder="Nombre" onChange={handleChange} className="input" />
+          <input name="contacto" placeholder="WhatsApp o Email" onChange={handleChange} className="input" />
+          <input name="ubicacion" placeholder="Ciudad" onChange={handleChange} className="input" />
+          <input name="rubro" placeholder="Rubro" onChange={handleChange} className="input" />
+        </Section>
 
         {/* MARCA */}
-        <Box title="Imagen de marca" />
+        <Section title="🎨 Imagen de marca">
+          <select name="logo" onChange={handleChange} className="input">
+            <option>¿Tenés logo?</option>
+            <option>Si</option>
+            <option>No</option>
+          </select>
 
-        <select name="logo" onChange={handleChange} className="input">
-          <option>¿Tenés logo?</option>
-          <option>Sí</option>
-          <option>No</option>
-        </select>
+          {form.logo === "No" && (
+            <p className="text-xs text-red-500">
+              ⚠ El logo se cobra aparte
+            </p>
+          )}
 
-        <input name="colores" placeholder="¿Tenés paleta de colores?" onChange={handleChange} className="input" />
+          <select name="fotos" onChange={handleChange} className="input">
+            <option>¿Tenés fotos?</option>
+            <option>Si</option>
+            <option>No</option>
+          </select>
 
-        <select name="fotos" onChange={handleChange} className="input">
-          <option>¿Tenés fotos de productos?</option>
-          <option>Sí</option>
-          <option>No</option>
-        </select>
+          {form.fotos === "No" && (
+            <p className="text-xs text-red-500">
+              ⚠ Sin fotos no podemos avanzar
+            </p>
+          )}
+        </Section>
 
         {/* PRODUCTOS */}
-        <Box title="Productos" />
+        <Section title="📦 Productos">
+          <input name="cantidad" placeholder="Cantidad de productos" onChange={handleChange} className="input" />
 
-        <input name="cantidad" placeholder="Cantidad de productos" onChange={handleChange} className="input" />
+          <select name="categorias" onChange={handleChange} className="input">
+            <option>¿Cómo los tenés organizados?</option>
+            <option>Planilla</option>
+            <option>Desordenado</option>
+          </select>
 
-        <select name="categorias" onChange={handleChange} className="input">
-          <option>¿Cómo tenés los productos?</option>
-          <option>En planilla</option>
-          <option>Todo suelto</option>
-        </select>
+          {form.categorias === "Desordenado" && (
+            <p className="text-xs text-yellow-500">
+              ⚠ Requiere organización previa (extra)
+            </p>
+          )}
+        </Section>
 
-        {/* LOGÍSTICA */}
-        <Box title="Logística" />
+        {/* LOGISTICA */}
+        <Section title="🚚 Logística">
+          <select name="envios" onChange={handleChange} className="input">
+            <option>¿Hacés envíos?</option>
+            <option>No</option>
+            <option>Local</option>
+            <option>Todo el país</option>
+          </select>
 
-        <select name="envios" onChange={handleChange} className="input">
-          <option>¿Hacés envíos?</option>
-          <option>No</option>
-          <option>Solo local</option>
-          <option>Todo el país</option>
-        </select>
-
-        <div>
-          <p className="text-sm mb-1">Empresas de envío</p>
-          {["OCA", "Correo Argentino", "Andreani"].map((e) => (
-            <label key={e} className="block">
-              <input type="checkbox" name="correo" value={e} onChange={handleChange} /> {e}
-            </label>
-          ))}
-        </div>
+          {form.envios !== "No" && (
+            <div>
+              <p className="text-sm">Correos</p>
+              {["OCA", "Correo Argentino", "Andreani"].map((e) => (
+                <label key={e} className="block">
+                  <input type="checkbox" name="correo" value={e} onChange={handleChange} /> {e}
+                </label>
+              ))}
+            </div>
+          )}
+        </Section>
 
         {/* PAGOS */}
-        <Box title="Medios de pago" />
+        <Section title="💰 Pagos">
+          <div>
+            {[
+              "Alias",
+              "Efectivo",
+              "Tarjeta",
+              "MercadoPago",
+              "Cripto",
+            ].map((p) => (
+              <label key={p} className="block">
+                <input type="checkbox" name="pagos" value={p} onChange={handleChange} /> {p}
+              </label>
+            ))}
+          </div>
 
-        <div>
-          {[
-            "Alias",
-            "Efectivo",
-            "Contra entrega",
-            "Tarjeta",
-            "MercadoPago",
-            "PayPal",
-            "Stripe",
-            "Cripto",
-          ].map((p) => (
-            <label key={p} className="block">
-              <input type="checkbox" name="pagos" value={p} onChange={handleChange} /> {p}
-            </label>
-          ))}
-        </div>
-
-        <select name="pago_servicio" onChange={handleChange} className="input">
-          <option>¿Cómo querés pagar el servicio?</option>
-          <option>Pago único</option>
-          <option>Seña 50%</option>
-          <option>Por etapas</option>
-          <option>Consultar</option>
-        </select>
+          <select name="pago_servicio" onChange={handleChange} className="input">
+            <option>¿Cómo pagás el servicio?</option>
+            <option>Pago único</option>
+            <option>Seña + saldo</option>
+          </select>
+        </Section>
 
         {/* ESTRUCTURA */}
-        <Box title="Estructura de la web" />
-
-        <div>
-          {[
-            "Grilla productos",
-            "Carrusel",
-            "Hero",
-            "Quiénes somos",
-            "Sección envíos",
-          ].map((c) => (
-            <label key={c} className="block">
-              <input type="checkbox" name="componentes" value={c} onChange={handleChange} /> {c}
-            </label>
-          ))}
-        </div>
+        <Section title="🧱 Estructura web">
+          <div>
+            {[
+              "Carrito",
+              "Landing o Marketing que convierta",
+              "SEO para Google (mas ventas)",
+              "Quiénes somos",
+              "Sección envíos",
+              "Ofertas / promociones",
+              "Condiciones de Ventas",
+              "Comparación plataformas",
+              "Grilla de productos estáticos",
+              "Carrusel Imagenes dinámico",
+              "Video presentación",
+              "Testimonios",
+              "Mapa (Google Maps o dibujado)",
+            ].map((c) => (
+              <label key={c} className="block">
+                <input type="checkbox" name="componentes" value={c} onChange={handleChange} /> {c}
+              </label>
+            ))}
+          </div>
+        </Section>
 
         {/* REDES */}
-        <Box title="Redes sociales" />
-
-        <div>
-          {[
-            "Instagram",
-            "WhatsApp",
-            "TikTok",
-            "Mail",
-            "Facebook",
-            "LinkedIn",
-          ].map((r) => (
-            <label key={r} className="block">
-              <input type="checkbox" name="redes" value={r} onChange={handleChange} /> {r}
-            </label>
-          ))}
-        </div>
+        <Section title="📲 Redes a integrar">
+          <div>
+            {["Instagram", "WhatsApp", "TikTok", "Mail", "Facebook", "LinkedIn"].map((r) => (
+              <label key={r} className="block">
+                <input type="checkbox" name="redes" value={r} onChange={handleChange} /> {r}
+              </label>
+            ))}
+          </div>
+        </Section>
 
         <button className="w-full bg-black text-white p-4 rounded-xl mt-6">
           👉 Enviar y empezar
