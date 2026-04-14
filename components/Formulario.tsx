@@ -81,7 +81,10 @@ Redes: ${form.redes}
           open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="p-4 space-y-3 border-t">
+      <div 
+  className="p-4 space-y-3 border-t"
+  onClick={(e) => e.stopPropagation()} // 🔥 ESTA ES LA CLAVE
+>
           {children}
         </div>
       </div>
