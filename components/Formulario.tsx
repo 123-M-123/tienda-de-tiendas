@@ -1,221 +1,189 @@
 "use client";
 import { useState } from "react";
 
+const steps = [
+  "nombre",
+  "contacto",
+  "ubicacion",
+  "rubro",
+  "logo",
+  "fotos",
+  "cantidad",
+  "envios",
+  "pagos",
+  "pago_servicio",
+];
+
 export default function Formulario() {
+  const [step, setStep] = useState(0);
   const [form, setForm] = useState<any>({});
 
-  const handleChange = (e: any) => {
-    const { name, value, type, checked } = e.target;
+  const next = () => setStep((s) => s + 1);
+  const back = () => setStep((s) => s - 1);
 
-    if (type === "checkbox") {
-      setForm((prev: any) => ({
-        ...prev,
-        [name]: prev[name]
-          ? checked
-            ? [...prev[name], value]
-            : prev[name].filter((v: string) => v !== value)
-          : [value],
-      }));
-    } else {
-      setForm({ ...form, [name]: value });
-    }
+  const setValue = (name: string, value: string) => {
+    setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-
+  const send = () => {
     const mensaje = `
-🚀 Nuevo cliente TIENDA DE TIENDAS
+🚀 Nuevo cliente
 
 Nombre: ${form.nombre}
 Contacto: ${form.contacto}
 Ubicación: ${form.ubicacion}
 Rubro: ${form.rubro}
-
 Productos: ${form.cantidad}
-Categorías: ${form.categorias}
-
-Logo: ${form.logo}
-Fotos: ${form.fotos}
-
 Envíos: ${form.envios}
-Correos: ${form.correo}
-
 Pagos: ${form.pagos}
 Pago servicio: ${form.pago_servicio}
-
-Componentes: ${form.componentes}
-Redes: ${form.redes}
     `;
 
     const url = `https://wa.me/5491153778475?text=${encodeURIComponent(mensaje)}`;
     window.open(url, "_blank");
   };
 
- const Box = ({ title, children }: any) => (
-  <details className="border rounded-xl p-4">
-    <summary className="font-bold cursor-pointer">{title}</summary>
-    <div className="mt-4 space-y-3">{children}</div>
-  </details>
-)
-
-  const Section = ({ title, children }: any) => (
-    <details className="border rounded-xl p-4">
-      <summary className="font-bold cursor-pointer">{title}</summary>
-      <div className="mt-4 space-y-3">{children}</div>
-    </details>
-  );
-
   return (
-    <section id="contacto" className="py-20 px-6 max-w-2xl mx-auto">
-      
-      <h2 className="text-3xl font-bold text-center mb-2">
-        Empezar mi tienda
-      </h2>
+    <section className="h-screen flex flex-col justify-center items-center px-6 text-center">
 
-      <p className="text-center text-sm opacity-70 mb-6">
-        ⚠ Solo trabajamos con personas listas para vender
-      </p>
+      {/* PROGRESO */}
+      <div className="mb-6 text-sm opacity-60">
+        Paso {step + 1} de {steps.length}
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* PREGUNTAS */}
+      {step === 0 && (
+        <>
+          <h2 className="text-2xl font-bold mb-4">¿Cómo te llamás?</h2>
+          <input
+            className="input text-center"
+            onChange={(e) => setValue("nombre", e.target.value)}
+          />
+          <button onClick={next} className="btn">Continuar</button>
+        </>
+      )}
 
-        {/* DATOS */}
-        <Section title="📊 Datos del negocio">
-          <input name="nombre" placeholder="Nombre" onChange={handleChange} className="input" />
-          <input name="contacto" placeholder="WhatsApp o Email" onChange={handleChange} className="input" />
-          <input name="ubicacion" placeholder="Ciudad" onChange={handleChange} className="input" />
-          <input name="rubro" placeholder="Rubro" onChange={handleChange} className="input" />
-        </Section>
+      {step === 1 && (
+        <>
+          <h2 className="text-2xl font-bold mb-4">¿Cómo te contacto?</h2>
+          <input
+            className="input text-center"
+            placeholder="WhatsApp o Email"
+            onChange={(e) => setValue("contacto", e.target.value)}
+          />
+          <button onClick={next} className="btn">Continuar</button>
+        </>
+      )}
 
-        {/* MARCA */}
-        <Section title="🎨 Imagen de marca">
-          <select name="logo" onChange={handleChange} className="input">
-            <option>¿Tenés logo?</option>
-            <option>Si</option>
-            <option>No</option>
-          </select>
+      {step === 2 && (
+        <>
+          <h2 className="text-2xl font-bold mb-4">¿De dónde sos?</h2>
+          <input
+            className="input text-center"
+            onChange={(e) => setValue("ubicacion", e.target.value)}
+          />
+          <button onClick={next} className="btn">Continuar</button>
+        </>
+      )}
 
-          {form.logo === "No" && (
-            <p className="text-xs text-red-500">
-              ⚠ El logo se cobra aparte
-            </p>
-          )}
+      {step === 3 && (
+        <>
+          <h2 className="text-2xl font-bold mb-4">¿Qué vendés?</h2>
+          <input
+            className="input text-center"
+            onChange={(e) => setValue("rubro", e.target.value)}
+          />
+          <button onClick={next} className="btn">Continuar</button>
+        </>
+      )}
 
-          <select name="fotos" onChange={handleChange} className="input">
-            <option>¿Tenés fotos?</option>
-            <option>Si</option>
-            <option>No</option>
-          </select>
+      {step === 4 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">¿Tenés logo?</h2>
+          <div className="grid gap-3 w-full">
+            {["Sí", "No"].map((op) => (
+              <button key={op} onClick={() => { setValue("logo", op); next(); }} className="btn">
+                {op}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
-          {form.fotos === "No" && (
-            <p className="text-xs text-red-500">
-              ⚠ Sin fotos no podemos avanzar
-            </p>
-          )}
-        </Section>
+      {step === 5 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">¿Tenés fotos?</h2>
+          <div className="grid gap-3 w-full">
+            {["Sí", "No"].map((op) => (
+              <button key={op} onClick={() => { setValue("fotos", op); next(); }} className="btn">
+                {op}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
-        {/* PRODUCTOS */}
-        <Section title="📦 Productos">
-          <input name="cantidad" placeholder="Cantidad de productos" onChange={handleChange} className="input" />
+      {step === 6 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">¿Cuántos productos?</h2>
+          <input
+            className="input text-center"
+            onChange={(e) => setValue("cantidad", e.target.value)}
+          />
+          <button onClick={next} className="btn">Continuar</button>
+        </>
+      )}
 
-          <select name="categorias" onChange={handleChange} className="input">
-            <option>¿Cómo los tenés organizados?</option>
-            <option>Planilla</option>
-            <option>Desordenado</option>
-          </select>
+      {step === 7 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">¿Hacés envíos?</h2>
+          <div className="grid gap-3 w-full">
+            {["No", "Local", "Todo el país"].map((op) => (
+              <button key={op} onClick={() => { setValue("envios", op); next(); }} className="btn">
+                {op}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
-          {form.categorias === "Desordenado" && (
-            <p className="text-xs text-yellow-500">
-              ⚠ Requiere organización previa (extra)
-            </p>
-          )}
-        </Section>
+      {step === 8 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">¿Cómo cobrás?</h2>
+          <div className="grid gap-3 w-full">
+            {["Alias", "Efectivo", "MercadoPago", "Cripto"].map((op) => (
+              <button key={op} onClick={() => { setValue("pagos", op); next(); }} className="btn">
+                {op}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
-        {/* LOGISTICA */}
-        <Section title="🚚 Logística">
-          <select name="envios" onChange={handleChange} className="input">
-            <option>¿Hacés envíos?</option>
-            <option>No</option>
-            <option>Local</option>
-            <option>Todo el país</option>
-          </select>
-
-          {form.envios !== "No" && (
-            <div>
-              <p className="text-sm">Correos</p>
-              {["OCA", "Correo Argentino", "Andreani"].map((e) => (
-                <label key={e} className="block">
-                  <input type="checkbox" name="correo" value={e} onChange={handleChange} /> {e}
-                </label>
-              ))}
-            </div>
-          )}
-        </Section>
-
-        {/* PAGOS */}
-        <Section title="💰 Pagos">
-          <div>
-            {[
-              "Alias",
-              "Efectivo",
-              "Tarjeta",
-              "MercadoPago",
-              "Cripto",
-            ].map((p) => (
-              <label key={p} className="block">
-                <input type="checkbox" name="pagos" value={p} onChange={handleChange} /> {p}
-              </label>
+      {step === 9 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">¿Cómo pagás el servicio?</h2>
+          <div className="grid gap-3 w-full">
+            {["Pago único", "Seña + saldo"].map((op) => (
+              <button key={op} onClick={() => setValue("pago_servicio", op)} className="btn">
+                {op}
+              </button>
             ))}
           </div>
 
-          <select name="pago_servicio" onChange={handleChange} className="input">
-            <option>¿Cómo pagás el servicio?</option>
-            <option>Pago único</option>
-            <option>Seña + saldo</option>
-          </select>
-        </Section>
+          <button onClick={send} className="btn mt-4 bg-black text-white">
+            🚀 Enviar
+          </button>
+        </>
+      )}
 
-        {/* ESTRUCTURA */}
-        <Section title="🧱 Estructura web">
-          <div>
-            {[
-              "Carrito",
-              "Landing o Marketing que convierta",
-              "SEO para Google (mas ventas)",
-              "Quiénes somos",
-              "Sección envíos",
-              "Ofertas / promociones",
-              "Condiciones de Ventas",
-              "Comparación plataformas",
-              "Grilla de productos estáticos",
-              "Carrusel Imagenes dinámico",
-              "Video presentación",
-              "Testimonios",
-              "Mapa (Google Maps o dibujado)",
-            ].map((c) => (
-              <label key={c} className="block">
-                <input type="checkbox" name="componentes" value={c} onChange={handleChange} /> {c}
-              </label>
-            ))}
-          </div>
-        </Section>
-
-        {/* REDES */}
-        <Section title="📲 Redes a integrar">
-          <div>
-            {["Instagram", "WhatsApp", "TikTok", "Mail", "Facebook", "LinkedIn"].map((r) => (
-              <label key={r} className="block">
-                <input type="checkbox" name="redes" value={r} onChange={handleChange} /> {r}
-              </label>
-            ))}
-          </div>
-        </Section>
-
-        <button className="w-full bg-black text-white p-4 rounded-xl mt-6">
-          👉 Enviar y empezar
+      {/* BACK */}
+      {step > 0 && (
+        <button onClick={back} className="mt-6 text-sm opacity-60">
+          ← Volver
         </button>
+      )}
 
-      </form>
     </section>
   );
 }
