@@ -1,5 +1,5 @@
 'use client'
-
+import Image from "next/image";
 export default function Header() {
 
   const handleNavClick = (e: any, id: string) => {
@@ -30,8 +30,9 @@ export default function Header() {
         </a>
 
         {/* CENTRO - LOGO */}
-        <div className="font-bold text-lg text-center">
-          Tienda de Tiendas
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <Image src="/logo.png" alt="TECNO EG" width={210} height={84} priority
+            style={{ objectFit: 'contain', height: 'auto', maxHeight: 84 }} />
         </div>
 
         {/* DERECHA - BOTÓN */}
