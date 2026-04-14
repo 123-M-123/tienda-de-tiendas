@@ -28,6 +28,7 @@ export default function Formulario() {
 🚀 Nuevo cliente TIENDA DE TIENDAS
 
 Nombre: ${form.nombre}
+Emprendimiento: ${form.emprendimiento}
 Contacto: ${form.contacto}
 Ubicación: ${form.ubicacion}
 Rubro: ${form.rubro}
@@ -52,17 +53,15 @@ Redes: ${form.redes}
     window.open(url, "_blank");
   };
 
- const Box = ({ title, children }: any) => (
-  <details className="border rounded-xl p-4">
-    <summary className="font-bold cursor-pointer">{title}</summary>
-    <div className="mt-4 space-y-3">{children}</div>
-  </details>
-)
-
   const Section = ({ title, children }: any) => (
     <details className="border rounded-xl p-4">
       <summary className="font-bold cursor-pointer">{title}</summary>
-      <div className="mt-4 space-y-3">{children}</div>
+      <div 
+        className="mt-4 space-y-3"
+        onClick={(e) => e.stopPropagation()} // 🔥 FIX NO CIERRE
+      >
+        {children}
+      </div>
     </details>
   );
 
@@ -81,7 +80,12 @@ Redes: ${form.redes}
 
         {/* DATOS */}
         <Section title="📊 Datos del negocio">
-          <input name="nombre" placeholder="Nombre" onChange={handleChange} className="input" />
+          <p className="text-sm opacity-60">
+            Necesitamos estos datos básicos para entender tu proyecto.
+          </p>
+
+          <input name="nombre" placeholder="Tu nombre" onChange={handleChange} className="input" />
+          <input name="emprendimiento" placeholder="Nombre del emprendimiento / marca" onChange={handleChange} className="input" />
           <input name="contacto" placeholder="WhatsApp o Email" onChange={handleChange} className="input" />
           <input name="ubicacion" placeholder="Ciudad" onChange={handleChange} className="input" />
           <input name="rubro" placeholder="Rubro" onChange={handleChange} className="input" />
@@ -89,6 +93,10 @@ Redes: ${form.redes}
 
         {/* MARCA */}
         <Section title="🎨 Imagen de marca">
+          <p className="text-sm opacity-60">
+            Esto define cómo te van a percibir tus clientes.
+          </p>
+
           <select name="logo" onChange={handleChange} className="input">
             <option>¿Tenés logo?</option>
             <option>Si</option>
@@ -116,6 +124,10 @@ Redes: ${form.redes}
 
         {/* PRODUCTOS */}
         <Section title="📦 Productos">
+          <p className="text-sm opacity-60">
+            Mientras más ordenado esté esto, mejor va a vender tu tienda.
+          </p>
+
           <input name="cantidad" placeholder="Cantidad de productos" onChange={handleChange} className="input" />
 
           <select name="categorias" onChange={handleChange} className="input">
@@ -133,6 +145,10 @@ Redes: ${form.redes}
 
         {/* LOGISTICA */}
         <Section title="🚚 Logística">
+          <p className="text-sm opacity-60">
+            Esto impacta directamente en la experiencia del cliente.
+          </p>
+
           <select name="envios" onChange={handleChange} className="input">
             <option>¿Hacés envíos?</option>
             <option>No</option>
@@ -153,7 +169,11 @@ Redes: ${form.redes}
         </Section>
 
         {/* PAGOS */}
-        <Section title="💰 Pagos">
+        <Section title="💰 Medios de pago">
+          <p className="text-sm opacity-60">
+            ¿Cómo querés cobrar?
+          </p>
+
           <div>
             {[
               "Alias",
@@ -177,21 +197,25 @@ Redes: ${form.redes}
 
         {/* ESTRUCTURA */}
         <Section title="🧱 Estructura web">
+          <p className="text-sm opacity-60">
+            (Orientativa) Elegí lo que creas que necesitás.
+          </p>
+
           <div>
             {[
               "Carrito",
-              "Landing o Marketing que convierta",
-              "SEO para Google (mas ventas)",
+              "Landing que convierta",
+              "SEO (más ventas)",
               "Quiénes somos",
               "Sección envíos",
-              "Ofertas / promociones",
-              "Condiciones de Ventas",
+              "Ofertas",
+              "Condiciones de venta",
               "Comparación plataformas",
-              "Grilla de productos estáticos",
-              "Carrusel Imagenes dinámico",
-              "Video presentación",
+              "Grilla productos",
+              "Carrusel dinámico",
+              "Video",
               "Testimonios",
-              "Mapa (Google Maps o dibujado)",
+              "Mapa",
             ].map((c) => (
               <label key={c} className="block">
                 <input type="checkbox" name="componentes" value={c} onChange={handleChange} /> {c}
@@ -201,7 +225,11 @@ Redes: ${form.redes}
         </Section>
 
         {/* REDES */}
-        <Section title="📲 Redes a integrar">
+        <Section title="📲 Redes">
+          <p className="text-sm opacity-60">
+            ¿Cuáles querés integrar?
+          </p>
+
           <div>
             {["Instagram", "WhatsApp", "TikTok", "Mail", "Facebook", "LinkedIn"].map((r) => (
               <label key={r} className="block">
