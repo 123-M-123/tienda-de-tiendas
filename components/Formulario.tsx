@@ -53,17 +53,41 @@ Redes: ${form.redes}
     window.open(url, "_blank");
   };
 
-  const Section = ({ title, children }: any) => (
-    <details className="border rounded-xl p-4">
-      <summary className="font-bold cursor-pointer">{title}</summary>
-      <div 
-        className="mt-4 space-y-3"
-        onClick={(e) => e.stopPropagation()} // 🔥 FIX NO CIERRE
+  const Section = ({ title, children }: any) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border rounded-xl overflow-hidden">
+      
+      {/* HEADER CLICK */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full text-left p-4 font-bold flex justify-between items-center"
       >
-        {children}
+        {title}
+        <span
+          className={`transition-transform duration-300 ${
+            open ? "rotate-180" : ""
+          }`}
+        >
+          ▼
+        </span>
+      </button>
+
+      {/* CONTENIDO ANIMADO */}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          open ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="p-4 space-y-3 border-t">
+          {children}
+        </div>
       </div>
-    </details>
+    </div>
   );
+};
 
   return (
     <section id="contacto" className="py-20 px-6 max-w-2xl mx-auto">
