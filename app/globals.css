@@ -1,176 +1,17 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-
-/* Variables */
-/* Variables de tema */
-:root {
-  --color-bg: #948d6867;   /* fondo claro por defecto */
-  --color-text: #000000; /* texto oscuro por defecto */
+* {
+  pointer-events: auto !important;
 }
-
-
-
-:root {
-  --background: #fff890;
-  --foreground: #000000;
- 
-
-/* Dark mode */
-.dark {
-  --background: #111111;       /* fondo general */
-  --foreground: #f5f5f5;       /* texto principal */
-
-
-}
-
-/* Base */
-body{
+/* RESET BASE */
+body {
   margin: 0;
   padding: 0;
   font-family: Inter, system-ui, sans-serif;
-
-  background-color: var(--color-bg);
-  color: var(--color-text);
-
-  /* overflow-x: hidden;
-  overflow-y: auto; */ /* desactivado para probar carrusel */
+  background-color: #f5f5f5;
+  color: #000;
 }
 
-/
-
-/* SVG fixes */
-.social-links .social-instagram svg,
-.cart-btn .icon-carrito {
-  stroke: currentColor;
-  stroke-width: 2;
-  fill: none;
-  width: 30px;
-  height: 30px;
-}
-.social-links .social-whatsapp svg {
-  fill: currentColor;
-  stroke: none;
-  width: 30px;
-  height: 30px;
-}
-
-/* Logo */
-.logo-wrap {
-  position: absolute;
-  top: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 80;
-}
-
-/* Carrito */
-.cart-btn {
-  position: relative;
-  background: transparent;
-  border: 2.5px solid var(--meraki-gold);
-  border-radius: 8px;
-  padding: .35rem .6rem;
-  color: var(--meraki-gold);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: .35rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-top: 8px;
-  z-index: 70;
-}
-.cart-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: var(--meraki-purple);
-  color: #fff;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: .7rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Fila 2 (nav marrón) */
-header nav {
-  background: var(--meraki-tan); /* el color correcto */
-  padding: .2rem 1rem;
-  position: relative; /* para los absolutos */
-  display: flex;
-  justify-content: center; /* centra los links */
-  align-items: center;
-  z-index: 60;
-}
-
-/* Links centrados */
-.nav-links {
-  display: flex;
-  justify-content: center;
-  gap: 1.2rem;
-}
-
-/* Hamburguesa fija a la izquierda */
-.menu-toggle {
-  position: absolute;
-  left: 1rem;
-}
-
-
-/* Responsive */
-@media (max-width: 768px) {
-  header nav {
-    min-height: 50px;
-    padding: 0.6rem 1rem;
-  }
-  .header-inner {
-    height: 90px;
-    padding: 0 1rem 6px;
-    align-items: flex-start;
-    padding-bottom: 15px;
-  }
-  .social-links svg { width: 26px; height: 26px; }
-  .logo-wrap img { width: 200px; max-height: 140px; height: auto; }
-  .menu-toggle { display: inline-block; }
-
-  /* Menú hamburguesa más compacto */
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    gap: 0.4rem;       /* menos espacio entre links */
-    width: 100%;
-    align-items: center;
-    margin-top: 0;     /* elimina margen extra arriba */
-    padding-bottom: 0.5rem; /* controla espacio abajo */
-  }
-  .nav-links.open { display: flex; }
-
-  .social-links {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.6rem;
-    margin-top: 8px;
-  }
-
-  .cart-btn { padding: .35rem .5rem; margin-top: 18px; }
-}
-
-/* Accesibilidad */
-a:focus, button:focus {
-  outline: 2px solid rgba(0,0,0,0.08);
-  outline-offset: 2px;
-}
-
-.input {
-  width: 100%;
-  border: 1px solid #686868;
-  padding: 12px;
-  border-radius: 12px;
-}
+/* INPUTS */
 .input {
   width: 100%;
   border: 1px solid #ccc;
@@ -178,14 +19,10 @@ a:focus, button:focus {
   border-radius: 12px;
 }
 
-.btn {
-  width: 100%;
-  border: 1px solid black;
-  padding: 14px;
-  border-radius: 12px;
-  font-weight: bold;
+/* BOTONES */
+button {
+  cursor: pointer;
 }
-
-
-
+* {
+  pointer-events: auto !important;
 }
