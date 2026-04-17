@@ -88,11 +88,11 @@ ${form.estructura.join(", ")}
     window.open(url, "_blank");
   };
 
-  // estilos seguros
   const container = {
-    maxWidth: 560,
+    width: "100%",
+    maxWidth: 500,
     margin: "0 auto",
-    padding: 20,
+    padding: "0 12px",
     fontFamily: "system-ui",
   };
 
@@ -148,6 +148,22 @@ ${form.estructura.join(", ")}
     fontSize: 14,
   };
 
+  // 🔥 ESTO ES LO IMPORTANTE (alineación correcta)
+  const checkbox = {
+    width: 16,
+    height: 16,
+    marginRight: 8,
+    flexShrink: 0,
+  };
+
+  const label = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start", // SIEMPRE IZQUIERDA
+    width: "100%",
+    fontSize: 14,
+  };
+
   const button = {
     marginTop: 12,
     padding: 16,
@@ -160,13 +176,6 @@ ${form.estructura.join(", ")}
     cursor: "pointer",
   };
 
-  const label = {
-    display: "flex",
-    gap: 8,
-    alignItems: "center",
-    fontSize: 14,
-  };
-
   const titleRow = {
     display: "flex",
     alignItems: "center",
@@ -174,156 +183,97 @@ ${form.estructura.join(", ")}
   };
 
   return (
-    <section style={container}>
-      <h2 style={title}>Empezar mi tienda</h2>
-      <p style={subtitle}>Solo para gente que quiere vender en serio</p>
+    <section id="contacto" className="scroll-mt-[90px] px-4">
+      <div style={container}>
+        <h2 style={title}>Empezar mi tienda</h2>
+        <p style={subtitle}>Solo para gente que quiere vender en serio</p>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: 12 }}
-      >
-        {/* DATOS */}
-        <div style={card}>
-          <button type="button" onClick={() => toggle("datos")} style={header}>
-            <div style={titleRow}>
-              <User size={18} /> Datos del negocio
-            </div>
-            <span>{open === "datos" ? "−" : "+"}</span>
-          </button>
-          {open === "datos" && (
-            <div style={content}>
-              <input name="nombre" placeholder="Tu nombre" onChange={handleChange} style={input} />
-              <input name="emprendimiento" placeholder="Nombre del emprendimiento" onChange={handleChange} style={input} />
-              <input name="contacto" placeholder="WhatsApp o Email" onChange={handleChange} style={input} />
-              <input name="rubro" placeholder="Rubro" onChange={handleChange} style={input} />
-            </div>
-          )}
-        </div>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: 12 }}
+        >
+{/* DATOS */} <div style={card}> <button type="button" onClick={() => toggle("datos")} style={header}> <div style={titleRow}> <User size={18} /> Datos del negocio </div> <span>{open === "datos" ? "−" : "+"}</span> </button> {open === "datos" && ( <div style={content}> <input name="nombre" placeholder="Tu nombre" onChange={handleChange} style={input} /> <input name="emprendimiento" placeholder="Nombre del emprendimiento" onChange={handleChange} style={input} /> <input name="contacto" placeholder="WhatsApp o Email" onChange={handleChange} style={input} /> <input name="rubro" placeholder="Rubro" onChange={handleChange} style={input} /> </div> )} </div> {/* MARCA */} <div style={card}> <button type="button" onClick={() => toggle("marca")} style={header}> <div style={titleRow}> <Palette size={18} /> Imagen de marca </div> <span>{open === "marca" ? "−" : "+"}</span> </button> {open === "marca" && ( <div style={content}> <select name="logo" onChange={handleChange} style={input}> <option>¿Tenés logo?</option> <option>Si</option> <option>No</option> </select> <select name="fotos" onChange={handleChange} style={input}> <option>¿Tenés fotos?</option> <option>Si</option> <option>No</option> </select> </div> )} </div> {/* PRODUCTOS */} <div style={card}> <button type="button" onClick={() => toggle("productos")} style={header}> <div style={titleRow}> <Package size={18} /> Productos </div> <span>{open === "productos" ? "−" : "+"}</span> </button> {open === "productos" && ( <div style={content}> <input name="cantidad" placeholder="Cantidad de productos" onChange={handleChange} style={input} /> <select name="categorias" onChange={handleChange} style={input}> <option>¿Cómo los organizás?</option> <option>Planilla</option> <option>Desordenado</option> </select> </div> )} </div> {/* LOGISTICA */} <div style={card}> <button type="button" onClick={() => toggle("logistica")} style={header}> <div style={titleRow}> <Truck size={18} /> Logística </div> <span>{open === "logistica" ? "−" : "+"}</span> </button> {open === "logistica" && ( <div style={content}> <select name="envios" onChange={handleChange} style={input}> <option>¿Hacés envíos?</option> <option>No</option> <option>Local</option> <option>Todo el país</option> </select> </div> )} </div>
+          {/* PAGOS */}
+          <div style={card}>
+            <button type="button" onClick={() => toggle("pagos")} style={header}>
+              <div style={titleRow}>
+                <CreditCard size={18} /> Medios de pago
+              </div>
+              <span>{open === "pagos" ? "−" : "+"}</span>
+            </button>
+            {open === "pagos" && (
+              <div style={content}>
+                {["Efectivo", "Transferencia", "MercadoPago", "Tarjeta"].map((p) => (
+                  <label key={p} style={label}>
+                    <input
+                      type="checkbox"
+                      name="pagos"
+                      value={p}
+                      onChange={handleChange}
+                      style={checkbox}
+                    />
+                    {p}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
 
-        {/* MARCA */}
-        <div style={card}>
-          <button type="button" onClick={() => toggle("marca")} style={header}>
-            <div style={titleRow}>
-              <Palette size={18} /> Imagen de marca
-            </div>
-            <span>{open === "marca" ? "−" : "+"}</span>
-          </button>
-          {open === "marca" && (
-            <div style={content}>
-              <select name="logo" onChange={handleChange} style={input}>
-                <option>¿Tenés logo?</option>
-                <option>Si</option>
-                <option>No</option>
-              </select>
+          {/* REDES */}
+          <div style={card}>
+            <button type="button" onClick={() => toggle("redes")} style={header}>
+              <div style={titleRow}>
+                <Share2 size={18} /> Redes
+              </div>
+              <span>{open === "redes" ? "−" : "+"}</span>
+            </button>
+            {open === "redes" && (
+              <div style={content}>
+                {["Instagram", "WhatsApp", "TikTok", "Facebook"].map((r) => (
+                  <label key={r} style={label}>
+                    <input
+                      type="checkbox"
+                      name="redes"
+                      value={r}
+                      onChange={handleChange}
+                      style={checkbox}
+                    />
+                    {r}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
 
-              <select name="fotos" onChange={handleChange} style={input}>
-                <option>¿Tenés fotos?</option>
-                <option>Si</option>
-                <option>No</option>
-              </select>
-            </div>
-          )}
-        </div>
+          {/* ESTRUCTURA */}
+          <div style={card}>
+            <button type="button" onClick={() => toggle("estructura")} style={header}>
+              <div style={titleRow}>
+                <Layout size={18} /> Estructura web
+              </div>
+              <span>{open === "estructura" ? "−" : "+"}</span>
+            </button>
+            {open === "estructura" && (
+              <div style={content}>
+                {["Carrito", "Landing", "SEO", "Testimonios", "Video"].map((e) => (
+                  <label key={e} style={label}>
+                    <input
+                      type="checkbox"
+                      name="estructura"
+                      value={e}
+                      onChange={handleChange}
+                      style={checkbox}
+                    />
+                    {e}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
 
-        {/* PRODUCTOS */}
-        <div style={card}>
-          <button type="button" onClick={() => toggle("productos")} style={header}>
-            <div style={titleRow}>
-              <Package size={18} /> Productos
-            </div>
-            <span>{open === "productos" ? "−" : "+"}</span>
-          </button>
-          {open === "productos" && (
-            <div style={content}>
-              <input name="cantidad" placeholder="Cantidad de productos" onChange={handleChange} style={input} />
-              <select name="categorias" onChange={handleChange} style={input}>
-                <option>¿Cómo los organizás?</option>
-                <option>Planilla</option>
-                <option>Desordenado</option>
-              </select>
-            </div>
-          )}
-        </div>
-
-        {/* LOGISTICA */}
-        <div style={card}>
-          <button type="button" onClick={() => toggle("logistica")} style={header}>
-            <div style={titleRow}>
-              <Truck size={18} /> Logística
-            </div>
-            <span>{open === "logistica" ? "−" : "+"}</span>
-          </button>
-          {open === "logistica" && (
-            <div style={content}>
-              <select name="envios" onChange={handleChange} style={input}>
-                <option>¿Hacés envíos?</option>
-                <option>No</option>
-                <option>Local</option>
-                <option>Todo el país</option>
-              </select>
-            </div>
-          )}
-        </div>
-
-        {/* PAGOS */}
-        <div style={card}>
-          <button type="button" onClick={() => toggle("pagos")} style={header}>
-            <div style={titleRow}>
-              <CreditCard size={18} /> Medios de pago
-            </div>
-            <span>{open === "pagos" ? "−" : "+"}</span>
-          </button>
-          {open === "pagos" && (
-            <div style={content}>
-              {["Efectivo", "Transferencia", "MercadoPago", "Tarjeta"].map((p) => (
-                <label key={p} style={label}>
-                  <input type="checkbox" name="pagos" value={p} onChange={handleChange} /> {p}
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* REDES */}
-        <div style={card}>
-          <button type="button" onClick={() => toggle("redes")} style={header}>
-            <div style={titleRow}>
-              <Share2 size={18} /> Redes
-            </div>
-            <span>{open === "redes" ? "−" : "+"}</span>
-          </button>
-          {open === "redes" && (
-            <div style={content}>
-              {["Instagram", "WhatsApp", "TikTok", "Facebook"].map((r) => (
-                <label key={r} style={label}>
-                  <input type="checkbox" name="redes" value={r} onChange={handleChange} /> {r}
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* ESTRUCTURA */}
-        <div style={card}>
-          <button type="button" onClick={() => toggle("estructura")} style={header}>
-            <div style={titleRow}>
-              <Layout size={18} /> Estructura web
-            </div>
-            <span>{open === "estructura" ? "−" : "+"}</span>
-          </button>
-          {open === "estructura" && (
-            <div style={content}>
-              {["Carrito", "Landing", "SEO", "Testimonios", "Video"].map((e) => (
-                <label key={e} style={label}>
-                  <input type="checkbox" name="estructura" value={e} onChange={handleChange} /> {e}
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <button style={button}>Empezar ahora</button>
-      </form>
+          <button style={button}>Empezar ahora</button>
+        </form>
+      </div>
     </section>
   );
 }

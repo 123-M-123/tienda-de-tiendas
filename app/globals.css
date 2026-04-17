@@ -1,28 +1,18 @@
 @import "tailwindcss";
-* {
-  pointer-events: auto !important;
-}
+
 /* RESET BASE */
 body {
   margin: 0;
   padding: 0;
   font-family: Inter, system-ui, sans-serif;
-  background-color: #f5f5f5;
+  background-color: #e7e1ccd0;
   color: #000;
 }
 
 /* INPUTS */
-.input {
+input {
   width: 100%;
   border: 1px solid #ccc;
   padding: 14px;
   border-radius: 12px;
-}
-
-/* BOTONES */
-button {
-  cursor: pointer;
-}
-* {
-  pointer-events: auto !important;
 }
