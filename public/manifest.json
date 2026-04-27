@@ -1,11 +1,11 @@
 {
-  "name": "MB Compras — Bazar & Regalos",
-  "short_name": "MB Compras",
-  "description": "Bazar y regalos con envío a domicilio en CABA",
+  "name": "Tienda de Tiendas — Crea tu tienda online",
+  "short_name": "TiendaTiendas",
+  "description": "Creamos tiendas online simples, rápidas y sin comisiones mensuales ni dependencia de plataformas.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FBD8B6",
-  "theme_color": "#4A0606",
+  "background_color": "#e6dcb7fb",
+  "theme_color": "#e6dcb7fb",
   "orientation": "portrait",
   "icons": [
     {
