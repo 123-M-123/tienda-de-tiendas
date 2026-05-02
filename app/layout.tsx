@@ -1,9 +1,14 @@
+// app/layout.tsx
+
 import type { Metadata } from "next"
 import Script from "next/script"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
+
+import Header from "@/app/components/Header"
+import Footer from "@/app/components/Footer"
 
 const GA_ID = "G-SMRT3RGFJD"
 
@@ -91,7 +96,9 @@ export default function RootLayout({
       </head>
 
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+        <Header />
         {children}
+        <Footer />
         <Analytics />
       </body>
     </html>

@@ -4,43 +4,29 @@ import {
   Banknote,
   XCircle,
   CheckCircle,
-  Zap,
-  BarChart3
 } from "lucide-react"
 
 export default function HeroSection() {
   return (
-    <section 
-    id="inicio"
-    className="min-h-screen flex flex-col justify-center items-center text-center px-6">
-
+    <section
+      id="inicio"
+      className="min-h-screen flex flex-col justify-center items-center text-center px-6 py-16"
+    >
       {/* TITULO */}
-      <h1 className="text-4xl md:text-6xl font-bold mb-4 max-w-5xl">
-        Creá tu tienda online simple, rápido y barato.
+      <h1 className="text-4xl md:text-6xl font-bold mb-5 max-w-5xl leading-tight">
+        Tu tienda online propia,
         <br />
-        <span className="text-red-500">
-          Sin ningún gasto fijo.
-        </span>
+        lista para vender.
       </h1>
 
-      {/* SUB */}
-      <p className="text-xl md:text-2xl font-semibold mb-4">
-        Pagás una sola vez. La tienda es tuya. Punto.
+      {/* SUB PRINCIPAL */}
+      <p className="text-xl md:text-2xl font-semibold mb-3">
+        Sin cuotas mensuales. Sin depender de plataformas.
       </p>
 
-      <p className="text-lg max-w-2xl mb-10">
-        La mayoría paga todos los meses por algo que nunca termina de ser suyo.
+      <p className="text-lg max-w-2xl mb-10 opacity-80">
+        Invertís una vez y la tienda queda en tus manos.
       </p>
-
-      {/* PROBLEMA */}
-      <div className="mb-12 max-w-3xl">
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">
-          Si tu tienda no vende (o directamente no tenés tienda) es tu decisión.
-        </h2>
-        <p className="text-lg opacity-80">
-          No es el producto. No es el precio. Es tu web.
-        </p>
-      </div>
 
       {/* PERFILES */}
       <div className="grid md:grid-cols-3 gap-4 mb-12 max-w-5xl w-full">
@@ -49,9 +35,13 @@ export default function HeroSection() {
           <div className="flex justify-center mb-2">
             <Palette size={28} />
           </div>
-          <h3 className="font-bold mb-2">Perfil Pixel</h3>
+
+          <h2 className="font-bold mb-2">
+            Perfil Pixel
+          </h2>
+
           <p className="text-sm">
-            Diseño profesional que hace que tu marca parezca seria.
+            Diseño profesional para que tu marca transmita confianza real.
           </p>
         </div>
 
@@ -59,9 +49,13 @@ export default function HeroSection() {
           <div className="flex justify-center mb-2">
             <Unlock size={28} />
           </div>
-          <h3 className="font-bold mb-2">Perfil Libre</h3>
+
+          <h2 className="font-bold mb-2">
+            Perfil Libre
+          </h2>
+
           <p className="text-sm">
-            Código tuyo. Lo podés mover donde quieras.
+            Código propio y libertad para migrar donde quieras.
           </p>
         </div>
 
@@ -69,43 +63,37 @@ export default function HeroSection() {
           <div className="flex justify-center mb-2">
             <Banknote size={28} />
           </div>
-          <h3 className="font-bold mb-2">Perfil Argento</h3>
+
+          <h2 className="font-bold mb-2">
+            Perfil Argento
+          </h2>
+
           <p className="text-sm">
-            Cobrás directo. Sin comisiones, sin intermediarios.
+            Cobrás directo. Sin comisiones ni intermediarios.
           </p>
         </div>
 
       </div>
 
       {/* COMPARACION */}
-      <div className="grid md:grid-cols-2 gap-6 mb-12 max-w-5xl w-full">
+      <div className="grid md:grid-cols-2 gap-6 mb-10 max-w-5xl w-full">
 
+        {/* POSITIVO PRIMERO */}
         <div className="border rounded-xl p-6 text-left">
           <div className="flex items-center gap-2 mb-3">
-            <XCircle size={22} className="text-red-500" />
-            <h3 className="font-bold text-lg">Otras plataformas</h3>
+            <CheckCircle
+              size={22}
+              className="text-green-600"
+            />
+
+            <h2 className="font-bold text-lg">
+              Tienda de Tiendas
+            </h2>
           </div>
 
           <ul className="space-y-2 text-sm">
-            <li>Pagos mensuales</li>
-            <li>Comisiones por venta</li>
-            <li>La tienda nunca es tuya</li>
-          </ul>
-
-          <p className="mt-4 text-sm opacity-70">
-            Terminás pagando para siempre.
-          </p>
-        </div>
-
-        <div className="border rounded-xl p-6 text-left">
-          <div className="flex items-center gap-2 mb-3">
-            <CheckCircle size={22} className="text-green-600" />
-            <h3 className="font-bold text-lg">Tienda de Tiendas</h3>
-          </div>
-
-          <ul className="space-y-2 text-sm">
-            <li>Un solo pago</li>
-            <li>Sin comisiones</li>
+            <li>Un solo pago inicial</li>
+            <li>Sin cuotas mensuales</li>
             <li>La tienda es 100% tuya</li>
           </ul>
 
@@ -114,33 +102,43 @@ export default function HeroSection() {
           </p>
         </div>
 
+        {/* NEGATIVO DESPUES */}
+        <div className="border rounded-xl p-6 text-left">
+          <div className="flex items-center gap-2 mb-3">
+            <XCircle
+              size={22}
+              className="text-red-500"
+            />
+
+            <h2 className="font-bold text-lg">
+              Otras plataformas
+            </h2>
+          </div>
+
+          <ul className="space-y-2 text-sm">
+            <li>Pagos todos los meses</li>
+            <li>Comisiones por venta</li>
+            <li>Nunca termina de ser tuya</li>
+          </ul>
+
+          <p className="mt-4 text-sm opacity-70">
+            Terminás pagando por seguir usando algo prestado.
+          </p>
+        </div>
+
       </div>
 
-      {/* CTA */}
-      <div className="flex flex-col md:flex-row gap-4">
+      {/* CTA SIMPLE */}
+      <a
+        href="#contacto"
+        className="bg-black text-white px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition"
+      >
+        Empezar ahora
+      </a>
 
-        <a
-          href="#contacto"
-          className="bg-black text-white px-6 py-3 rounded-xl text-lg flex items-center gap-2 justify-center"
-        >
-          <Zap size={18} />
-          Quiero mi tienda
-        </a>
-
-        <a
-          href="/comparador/shopify-vs"
-          className="border px-6 py-3 rounded-xl text-lg flex items-center gap-2 justify-center"
-        >
-          <BarChart3 size={18} />
-          Ver comparación real
-        </a>
-
-      </div>
-
-      <p className="mt-6 text-sm opacity-70">
-        Opción rápida: tienda lista en 72hs.
+      <p className="mt-5 text-sm opacity-70">
+        Opción rápida disponible: tienda lista en 72hs.
       </p>
-
     </section>
   )
 }

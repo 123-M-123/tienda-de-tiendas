@@ -1,93 +1,97 @@
 'use client'
-import { useEffect, useState } from "react"
-import Image from "next/image"
 
-const sections = [
-  { id: "inicio", label: "Inicio" },
-  { id: "beneficios", label: "Beneficios" },
-  { id: "como-funciona", label: "Cómo funciona" },
-  { id: "clientes", label: "Clientes" },
-  { id: "compará", label: "Compará" },
-  { id: "contacto", label: "Empezar" },
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+const hiddenRow = [
+  { href: '/beneficios', label: 'Beneficios' },
+  { href: '/como-funciona', label: 'Cómo funciona' },
+  { href: '/clientes', label: 'Clientes' },
+  { href: '/compara', label: 'Compará' },
+]
+
+const mainRow = [
+  { href: '/', label: 'Inicio' },
+  { href: '/panel', label: 'Panel Cliente' },
+  { href: '/#contacto', label: 'Empezar' },
 ]
 
 export default function Header() {
+  const pathname = usePathname()
+  const [open, setOpen] = useState(false)
 
-  const [active, setActive] = useState("")
-
-  const handleNavClick = (e: any, id: string) => {
-    e.preventDefault()
-    const el = document.getElementById(id)
-    if (!el) return
-
-    const y = el.getBoundingClientRect().top + window.scrollY - 140
-
-    window.scrollTo({ top: y, behavior: 'smooth' })
+  const isActive = (href: string) => {
+    if (href === '/#contacto') return pathname === '/'
+    return pathname === href
   }
 
-  useEffect(() => {
-    const handleScroll = () => {
-      let current = ""
-
-      sections.forEach((sec) => {
-        const el = document.getElementById(sec.id)
-        if (!el) return
-
-        const top = el.offsetTop - 160
-        if (window.scrollY >= top) {
-          current = sec.id
+  const renderButton = (item: any) => (
+    <Link
+      key={item.href}
+      href={item.href}
+      className={`
+        px-2 py-2 min-w-20 rounded-md text-center leading-tight transition text-xs md:text-sm
+        ${isActive(item.href)
+          ? 'font-bold border-b-2 border-black'
+          : 'opacity-70 hover:opacity-100'
         }
-      })
-
-      setActive(current)
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    handleScroll()
-
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      `}
+    >
+      {item.label === 'Cómo funciona'
+        ? <>Cómo<br />funciona</>
+        : item.label}
+    </Link>
+  )
 
   return (
     <header className="sticky top-0 z-50 bg-[#e7e1ccd0] shadow-md">
 
       {/* LOGO */}
       <div className="max-w-3xl mx-auto px-4 py-4 flex justify-center">
-        <Image
-          src="/logo.png"
-          alt="Tienda de Tiendas"
-          width={500}
-          height={150}
-          priority
-          className="w-full max-w-[320px] md:max-w--130px h-auto object-contain"
-        />
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            alt="Tienda de Tiendas"
+            width={500}
+            height={150}
+            priority
+            className="w-full max-w-80 md:max-w-80 h-auto object-contain"
+          />
+        </Link>
       </div>
 
-      {/* NAV */}
       <div className="border-t">
-        <nav className="max-w-3xl mx-auto px-4 py-2 flex justify-center gap-4 text-xs md:text-sm">
 
-          {sections.map((sec) => (
-            <a
-              key={sec.id}
-              onClick={(e)=>handleNavClick(e, sec.id)}
-              className={`
-                cursor-pointer transition text-center leading-tight
-                ${active === sec.id
-                  ? "font-bold border-b-2 border-black"
-                  : "opacity-70 hover:opacity-100"
-                }
-              `}
-            >
-              {sec.id === "como-funciona"
-                ? <>Cómo<br/>funciona</>
-                : sec.label}
-            </a>
-          ))}
+        {/* FILA PRINCIPAL */}
+        <div className="max-w-3xl mx-auto px-3 pt-2 pb-2 relative">
 
-        </nav>
+          <button
+            onClick={() => setOpen(!open)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-2 font-bold text-sm"
+          >
+            {open ? '−' : '+'}
+          </button>
+
+          <nav className="flex justify-center gap-1 pr-8">
+            {mainRow.map(renderButton)}
+          </nav>
+        </div>
+
+        {/* FILA OCULTA */}
+        <div
+          className={`
+            overflow-hidden transition-all duration-300
+            ${open ? 'max-h-40 pb-2' : 'max-h-0'}
+          `}
+        >
+          <nav className="max-w-3xl mx-auto px-3 flex justify-center gap-1 flex-wrap">
+            {hiddenRow.map(renderButton)}
+          </nav>
+        </div>
+
       </div>
-
     </header>
   )
 }
