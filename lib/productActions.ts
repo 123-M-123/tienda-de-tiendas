@@ -1,36 +1,20 @@
 "use server"
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { getGoogleAccessToken } from "./googleAuth";
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
-
-async function getGoogleToken() {
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    body: new URLSearchParams({
-      client_id: process.env.GOOGLE_CLIENT_ID!,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-      refresh_token: process.env.GOOGLE_REFRESH_TOKEN!,
-      grant_type: 'refresh_token',
-    }),
-  });
-  const data = await res.json();
-  return data.access_token;
-}
 
 export async function saveProduct(formData: FormData, isEdit: boolean = false) {
   const session = await auth();
   if (!session?.user?.email) return { error: "No autorizado" };
 
-  const token = await getGoogleToken();
-  const email = session.user.email;
-
-  // Si es nuevo, generamos un ID automático: P + 6 últimos dígitos del timestamp
-  const id = isEdit ? formData.get("id") : `P-${Date.now().toString().slice(-6)}`;
+  const token = await getGoogleAccessToken();
+  const idProducto = formData.get("id") as string;
   
-  const datos = [
-    email,                    // A: Vendedor
-    id,                       // B: ID Producto
+  const filaDatos = [
+    session.user.email,       // A: Vendedor
+    idProducto,               // B: ID
     formData.get("titulo"),   // C
     formData.get("precio"),   // D
     formData.get("desc"),     // E
@@ -39,18 +23,29 @@ export async function saveProduct(formData: FormData, isEdit: boolean = false) {
   ];
 
   if (!isEdit) {
-    // INSERTAR NUEVO (Append)
+    // NUEVO: Append normal
     await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Carga%20de%20productos!A:G:append?valueInputOption=RAW`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ values: [datos] }),
+      body: JSON.stringify({ values: [filaDatos] }),
     });
   } else {
-    // EDITAR (Update) - Aquí primero buscamos la fila por ID y luego actualizamos
-    // Por simplicidad en este paso, asumimos que el sistema ya sabe la fila o busca por ID.
-    // (Luego podemos pulir la búsqueda de fila exacta).
+    // EDITAR: 1. Buscar la fila por ID
+    const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Carga%20de%20productos!B:B?key=${process.env.GOOGLE_API_KEY}`);
+    const data = await res.json();
+    const rows = data.values || [];
+    const index = rows.findIndex((row: any) => row[0] === idProducto);
+
+    if (index !== -1) {
+      const rowNumber = index + 1; // +1 porque Sheets cuenta desde 1
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Carga%20de%20productos!A${rowNumber}:G${rowNumber}?valueInputOption=RAW`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [filaDatos] }),
+      });
+    }
   }
 
   revalidatePath("/panel/productos");
-  return { success: true, id };
+  return { success: true };
 }

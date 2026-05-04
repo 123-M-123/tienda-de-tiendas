@@ -1,26 +1,39 @@
 import { signIn } from "@/auth"
+import { Store } from "lucide-react"
 
 export default function LoginPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md text-center">
-        <h1 className="text-2xl font-bold mb-6">Panel de Tienda de Tiendas</h1>
-        <p className="text-gray-600 mb-8">Ingresá con tu cuenta de Google para gestionar tus ventas.</p>
+    <div className="flex items-center justify-center min-h-screen bg-[#FDFBF7] p-4 text-[#1A1A1A]">
+      <div className="w-full max-w-md bg-[#F1F5F9] p-10 rounded-[3rem] shadow-sm border border-slate-200 text-center">
+        
+        {/* Logo Minimalista */}
+        <div className="flex justify-center mb-6">
+          <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
+            <Store className="text-white" size={32} />
+          </div>
+        </div>
+
+        <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Tienda de Tiendas</h1>
+        <p className="text-slate-500 text-sm font-medium mb-8">Ingresá al panel de gestión</p>
         
         <form
           action={async () => {
             "use server"
-            await signIn("google", { redirectTo: "/panel" })
+            await signIn("google", { redirectTo: "/panel/dashboard" })
           }}
         >
           <button 
             type="submit" 
-            className="flex items-center justify-center w-full gap-3 px-4 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="flex items-center justify-center w-full gap-3 px-6 py-4 bg-white text-slate-900 border border-slate-200 rounded-2xl hover:bg-slate-900 hover:text-white transition-all font-bold shadow-sm"
           >
-            <img src="/ico-ui/google.png" alt="Google" className="w-5 h-5 bg-white rounded-full p-0.5" />
+            <img src="https://www.google.com/favicon.ico" alt="G" className="w-4 h-4" />
             Continuar con Google
           </button>
         </form>
+
+        <p className="mt-8 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+          Acceso Seguro • Encriptado
+        </p>
       </div>
     </div>
   )
