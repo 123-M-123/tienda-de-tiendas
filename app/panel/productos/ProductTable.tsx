@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react";
 import { saveProduct } from "@/lib/productActions";
+import { Plus, Edit3, X, Box } from "lucide-react";
 
 export default function ProductTable({ initialData }: { initialData: any[] }) {
   const [showModal, setShowModal] = useState(false);
@@ -15,80 +16,86 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
     <>
       <button 
         onClick={() => openModal()}
-        className="mb-4 bg-[#2D6BE4] text-white px-4 py-2 rounded-lg font-bold text-sm"
+        className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-all shadow-lg shadow-blue-200"
       >
-        + Nuevo Producto
+        <Plus size={16} /> Nuevo Artículo
       </button>
 
-      <table className="w-full text-left text-sm border-collapse">
-        <thead>
-          <tr className="bg-[#F9F9F8] border-b border-[#E2E0DC]">
-            <th className="p-3">ID</th>
-            <th className="p-3">Título</th>
-            <th className="p-3">Precio</th>
-            <th className="p-3">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {initialData.map((row, i) => (
-            <tr key={i} className="border-b border-[#F0EFEA] hover:bg-[#FDFDFB]">
-              <td className="p-3 font-mono text-xs">{row[1]}</td>
-              <td className="p-3 font-bold">{row[2]}</td>
-              <td className="p-3">${row[3]}</td>
-              <td className="p-3">
-                <button onClick={() => openModal(row)} className="text-[#2D6BE4] hover:underline">Editar</button>
-              </td>
+      <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden mt-6">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="text-slate-400 text-[10px] uppercase tracking-widest bg-slate-50/50 border-b border-slate-100">
+              <th className="px-8 py-4 font-bold">ID</th>
+              <th className="px-8 py-4 font-bold">Título del Producto</th>
+              <th className="px-8 py-4 font-bold">Precio</th>
+              <th className="px-8 py-4 font-bold text-center">Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {initialData.map((row, i) => (
+              <tr key={i} className="hover:bg-slate-50/30 transition-colors">
+                <td className="px-8 py-5 text-[10px] font-mono text-slate-400">{row[1]}</td>
+                <td className="px-8 py-5 text-sm font-semibold text-slate-700">{row[2]}</td>
+                <td className="px-8 py-5 text-sm font-black text-slate-900">${Number(row[3]).toLocaleString()}</td>
+                <td className="px-8 py-5 text-center">
+                  <button onClick={() => openModal(row)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                    <Edit3 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {/* MODAL CON INLINE STYLES PROPIOS */}
+      {/* MODAL MODERNO */}
       {showModal && (
-        <div style={{
-          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50,
-          padding: '1rem'
-        }}>
-          <div style={{
-            backgroundColor: 'white', padding: '2rem', borderRadius: '16px',
-            width: '100%', maxWidth: '500px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
-          }}>
-            <h3 className="text-xl font-bold mb-4">
-              {editingProd ? "Editar Producto" : "Nuevo Producto"}
-            </h3>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white p-10 rounded-[3rem] w-full max-w-lg shadow-2xl border border-slate-100 relative">
+            <button onClick={() => setShowModal(false)} className="absolute right-8 top-8 text-slate-400 hover:text-slate-900">
+              <X size={24} />
+            </button>
+            
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                <Box size={24} />
+              </div>
+              <h3 className="text-2xl font-black text-slate-800">
+                {editingProd ? "Editar Artículo" : "Nuevo Artículo"}
+              </h3>
+            </div>
             
             <form action={async (fd) => {
               await saveProduct(fd, !!editingProd);
               setShowModal(false);
-            }} className="flex flex-col gap-4">
-              
+            }} className="space-y-5">
               {editingProd && <input type="hidden" name="id" value={editingProd[1]} />}
-
+              
               <div>
-                <label className="block text-xs font-bold text-[#6B6862] mb-1">TÍTULO</label>
-                <input name="titulo" defaultValue={editingProd?.[2] || ""} className="w-full border border-[#E2E0DC] p-2 rounded-lg" required />
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Nombre del Producto</label>
+                <input name="titulo" defaultValue={editingProd?.[2] || ""} className="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 font-semibold" required />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#6B6862] mb-1">PRECIO</label>
-                  <input name="precio" type="number" defaultValue={editingProd?.[3] || ""} className="w-full border border-[#E2E0DC] p-2 rounded-lg" required />
+                  <label className="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Precio (ARS)</label>
+                  <input name="precio" type="number" defaultValue={editingProd?.[3] || ""} className="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 font-semibold" required />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-[#6B6862] mb-1">CATEGORÍA</label>
-                  <input name="cat" defaultValue={editingProd?.[6] || ""} className="w-full border border-[#E2E0DC] p-2 rounded-lg" />
+                  <label className="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Categoría</label>
+                  <input name="cat" defaultValue={editingProd?.[6] || ""} className="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 font-semibold" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#6B6862] mb-1">URL IMAGEN (DRIVE)</label>
-                <input name="img" defaultValue={editingProd?.[5] || ""} className="w-full border border-[#E2E0DC] p-2 rounded-lg" />
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Link de Imagen</label>
+                <input name="img" defaultValue={editingProd?.[5] || ""} className="w-full bg-slate-50 border-none p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 font-semibold text-xs" />
               </div>
 
-              <div className="flex gap-3 mt-4">
-                <button type="submit" className="flex-1 bg-[#1A7F5A] text-white p-3 rounded-xl font-bold">Guardar Producto</button>
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-[#F7F6F3] text-[#6B6862] p-3 rounded-xl font-bold">Cancelar</button>
+              <div className="flex gap-4 pt-4">
+                <button type="submit" className="flex-1 bg-blue-600 text-white p-4 rounded-3xl font-black uppercase text-xs tracking-widest shadow-lg shadow-blue-100 hover:bg-slate-900 transition-all">
+                  {editingProd ? "Actualizar" : "Publicar Ahora"}
+                </button>
               </div>
             </form>
           </div>

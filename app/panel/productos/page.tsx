@@ -1,16 +1,13 @@
 import { getPanelData } from "@/lib/panelData";
-import ProductTable from "./ProductTable"; // Componente de cliente
+import ProductTable from "./ProductTable";
 
-export default async function ProductosPage() {
-  const productos = await getPanelData("Carga de productos") || [];
+export default async function ProductosPage({ searchParams }: { searchParams: { vendedor?: string } }) {
+  // Ahora la lista de productos también responde al selector de Admin
+  const productos = await getPanelData("Carga de productos", searchParams.vendedor) || [];
 
   return (
-    <div className="bg-white rounded-xl border border-[#E2E0DC] p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-bold">Mis Productos</h2>
-        {/* Este botón activará el modal en el componente de cliente */}
-      </div>
-
+    <div className="space-y-6">
+      <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Gestión de Inventario</h2>
       <ProductTable initialData={productos} />
     </div>
   );

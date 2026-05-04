@@ -1,51 +1,39 @@
 import { getPanelData } from "@/lib/panelData";
-import { ClipboardList, ExternalLink, Calendar, Tag, DollarSign } from "lucide-react";
+import { ClipboardList, ExternalLink, Calendar, Tag } from "lucide-react";
 
 export default async function PedidosPage({ searchParams }: { searchParams: { vendedor?: string } }) {
-  const vendedor = searchParams.vendedor;
-  const pedidos = await getPanelData("Pedidos", vendedor) || [];
+  const pedidos = await getPanelData("Pedidos", searchParams.vendedor) || [];
 
   return (
     <div className="space-y-6">
-    <div className="inline-flex items-center gap-3 border-b-4 border-[#E63946] pb-2">
-        <ClipboardList size={32} className="text-[#E63946]" />
-        <h2 className="text-2xl font-black uppercase">Validar Pedidos</h2>
-      </div>
+      <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Validar Pedidos</h2>
       
-      <div className="bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-[#F4EFE0] border-b-2 border-black">
-            <tr>
-              <th className="p-4 text-[10px] font-black uppercase flex items-center gap-2"><Calendar size={12}/> Fecha</th>
-              <th className="p-4 text-[10px] font-black uppercase"><Tag size={12} className="inline mr-1"/> Producto</th>
-              <th className="p-4 text-[10px] font-black uppercase"><DollarSign size={12} className="inline mr-1"/> Monto</th>
-              <th className="p-4 text-[10px] font-black uppercase text-center">Comprobante</th>
+      <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="text-slate-400 text-[10px] uppercase tracking-widest bg-slate-50/50 border-b border-slate-100">
+              <th className="px-8 py-4 font-bold">Fecha</th>
+              <th className="px-8 py-4 font-bold">Producto</th>
+              <th className="px-8 py-4 font-bold">Monto</th>
+              <th className="px-8 py-4 font-bold text-center">Acción</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-slate-50">
             {pedidos.length > 0 ? (
               pedidos.map((row: any, i: number) => (
-                <tr key={i} className="hover:bg-gray-50 transition-colors">
-                  <td className="p-4 text-xs text-gray-600">{row[1]}</td>
-                  <td className="p-4 text-sm font-bold uppercase">{row[2]}</td>
-                  <td className="p-4 text-sm font-black">${Number(row[3]).toLocaleString()}</td>
-                  <td className="p-4 text-center">
-                    <a 
-                      href={row[5]} 
-                      target="_blank" 
-                      className="inline-flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded text-[10px] font-black hover:bg-[#E63946] transition-colors"
-                    >
-                      VER IMAGEN <ExternalLink size={10} />
+                <tr key={i} className="hover:bg-slate-50/30 transition-colors">
+                  <td className="px-8 py-5 text-xs text-slate-500">{row[1]}</td>
+                  <td className="px-8 py-5 text-sm font-semibold text-slate-700">{row[2]}</td>
+                  <td className="px-8 py-5 text-sm font-black text-slate-900">${Number(row[3]).toLocaleString()}</td>
+                  <td className="px-8 py-5 text-center">
+                    <a href={row[5]} target="_blank" className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-bold hover:bg-blue-600 transition-all uppercase">
+                      Ver Recibo <ExternalLink size={12} />
                     </a>
                   </td>
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan={4} className="p-20 text-center text-gray-400 italic">
-                  No hay pedidos por transferencia registrados.
-                </td>
-              </tr>
+              <tr><td colSpan={4} className="p-20 text-center text-slate-300 text-sm italic">No hay pedidos pendientes.</td></tr>
             )}
           </tbody>
         </table>
