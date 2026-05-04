@@ -26,9 +26,9 @@ export async function getPanelData(pestaña: string, targetEmail?: string) {
     // Construimos la URL para la API de Google Sheets (rango A2 hasta G1000)
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(pestaña)}!A2:G1000`;
 
-    const res = await fetch(url, {
+  const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
-      next: { revalidate: 0 } // Forzamos a Next.js a no cachear para ver datos en tiempo real
+      cache: 'no-store' // <--- ESTO OBLIGA A BUSCAR DATOS REALES EN CADA CLIC
     });
 
     const data = await res.json();

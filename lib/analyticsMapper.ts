@@ -1,9 +1,11 @@
 const propertyMapping: { [key: string]: string } = {
   "marcosmarti1980@gmail.com": "534648857", // Tienda de Tiendas (Admin)
-  "tecnoeg@gmail.com": "534564663",        // Tecno EG
-  "merakibiju@gmail.com": "534733481",     // Meraki
-  "mbcompras@gmail.com": "534715172",      // MB Compras
-  "elcampito@gmail.com": "534606659",      // El Campito
+  "marcosrenemarti@gmail.com": "534564663",        // Tecno EG
+  "mguiyemo@gmail.com": "534564663",        // Tecno EG
+  "marielabasualdo1985@gmail.com": "534733481",     // Meraki
+  "axel2002@gmail.com": "534715172",      // MB Compras
+  "elianamarti90@gmail.com": "534606659",      // El Campito
+  "exequiel.devita@gmail.com": "534606659",      // El Campito
 };
 
 export function getPropertyIdByUser(email: string) {

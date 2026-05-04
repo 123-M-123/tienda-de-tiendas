@@ -1,56 +1,61 @@
 import { auth } from "@/auth";
 import Link from "next/link";
+import { 
+  LayoutDashboard, ClipboardList, CreditCard, 
+  Package, Store, UserCircle, BarChart3, LogOut 
+} from "lucide-react";
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  
+
   return (
-    <div className="min-h-screen bg-[#F4EFE0] flex flex-col md:flex-row text-[#1A1A1A]">
-      {/* Sidebar con el estilo del Toldo */}
-      <aside className="w-full md:w-64 bg-white border-r border-[#D1C7B7] flex flex-col">
-        {/* Cabecera del Sidebar con franjas rojas y blancas */}
-        <div className="h-4 w-full flex">
-           {[...Array(10)].map((_, i) => (
-             <div key={i} className={`flex-1 h-full ${i % 2 === 0 ? 'bg-[#E63946]' : 'bg-white'}`} />
-           ))}
-        </div>
-        
-        <div className="p-6">
-          <div className="mb-10 text-center">
-            <img src="/logo-tienda-de-tiendas.png" alt="Logo" className="mx-auto w-32" />
-            <p className="text-[10px] uppercase tracking-widest mt-2 text-[#6B6862]">Panel de Gestión</p>
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row text-slate-900 font-sans">
+      
+      {/* SIDEBAR MINIMALISTA */}
+      <aside className="w-full md:w-72 bg-white border-r border-slate-200 flex flex-col">
+        <div className="p-8 flex-1">
+          <div className="mb-12 flex items-center gap-2">
+            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+              <Store className="text-white" size={18} />
+            </div>
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">Tienda de Tiendas</h1>
           </div>
           
-          <nav className="flex flex-col gap-1">
-            <NavLink href="/panel/dashboard" label="Métricas" icon="📊" activeColor="#E63946" />
-            <NavLink href="/panel/pedidos" label="Pedidos" icon="📩" activeColor="#E63946" />
-            <NavLink href="/panel/webhook" label="Pagos Online" icon="💳" activeColor="#E63946" />
-            <NavLink href="/panel/productos" label="Mis Productos" icon="📦" activeColor="#E63946" />
+          <nav className="flex flex-col gap-2">
+            <NavLink href="/panel/dashboard" label="Resumen" icon={<LayoutDashboard size={20} />} />
+            <NavLink href="/panel/analytics" label="Métricas" icon={<BarChart3 size={20} />} />
+            <NavLink href="/panel/pedidos" label="Pedidos" icon={<ClipboardList size={20} />} />
+            <NavLink href="/panel/webhook" label="Pagos Online" icon={<CreditCard size={20} />} />
+            <NavLink href="/panel/productos" label="Productos" icon={<Package size={20} />} />
           </nav>
+        </div>
+
+        <div className="p-6 border-t border-slate-100">
+          <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-600 font-bold">
+              {session?.user?.email?.[0].toUpperCase()}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-xs font-bold truncate">{session?.user?.name || "Admin"}</p>
+              <p className="text-[10px] text-slate-400 truncate">{session?.user?.email}</p>
+            </div>
+          </div>
         </div>
       </aside>
 
-      <main className="flex-1 p-6 md:p-12">
-        <header className="flex justify-between items-center mb-8 border-b border-[#D1C7B7] pb-4">
-          <div>
-            <span className="text-sm uppercase tracking-tighter text-[#6B6862]">Bienvenido al mostrador</span>
-            <h2 className="text-xl font-black">{session?.user?.name || "Comerciante"}</h2>
-          </div>
-          <div className="bg-white px-4 py-2 rounded-full border border-[#D1C7B7] text-xs font-bold shadow-sm">
-            {session?.user?.email}
-          </div>
-        </header>
+      {/* CONTENIDO PRINCIPAL */}
+      <main className="flex-1 p-6 md:p-12 overflow-y-auto">
         {children}
       </main>
     </div>
   );
 }
 
-function NavLink({ href, label, icon, activeColor }: { href: string, label: string, icon: string, activeColor: string }) {
+function NavLink({ href, label, icon }: { href: string, label: string, icon: React.ReactNode }) {
   return (
-    <Link href={href} className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#F4EFE0] transition-all group">
-      <span className="text-lg">{icon}</span>
-      <span className="font-bold group-hover:text-[#E63946]">{label}</span>
+    <Link href={href} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 text-slate-500 hover:text-slate-900 transition-all font-semibold text-sm">
+      {icon}
+      {label}
     </Link>
   );
 }

@@ -9,8 +9,12 @@ export interface ClienteInfo {
 }
 
 export const CLIENTES: Record<string, ClienteInfo> = {
-  "tecnoeg@gmail.com": { nombre: "Tecno EG", gaId: "534564663" },
-  "merakibiju@gmail.com": { nombre: "Meraki", gaId: "534733481" },
-  "mbcompras@gmail.com": { nombre: "MB Compras", gaId: "534715172" },
-  "elcampito@gmail.com": { nombre: "El Campito", gaId: "534606659" },
+  "marcosrenemarti@gmail.com": { nombre: "Tecno EG", gaId: "534564663" },
+  "mguiyemo@gmail.com": { nombre: "Tecno EG", gaId: "534564663" },
+  "marielabasualdo1985@gmail.com": { nombre: "Meraki", gaId: "534733481" },
+  "axel2002@gmail.com": { nombre: "MB Compras", gaId: "534715172" },
+  "mateomarti3072@gmail.com": { nombre: "MB Compras", gaId: "534715172" },
+  "elianamarti90@gmail.com": { nombre: "El Campito", gaId: "534606659" },
+"exequiel.devita@gmail.com": { nombre: "El Campito", gaId: "534606659" },
+
 };

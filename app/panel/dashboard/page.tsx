@@ -1,14 +1,10 @@
-// app/panel/dashboard/page.tsx
 import { auth } from "@/auth";
 import { getPanelData } from "@/lib/panelData";
-import { ADMIN_EMAIL, CLIENTES } from "@/lib/clientes"; // Cambiado a CLIENTES
+import { ADMIN_EMAIL, CLIENTES } from "@/lib/clientes";
+import { Wallet, ShoppingBag, Box, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-export default async function DashboardPage({
-  searchParams,
-}: {
-  searchParams: { vendedor?: string };
-}) {
+export default async function DashboardPage({ searchParams }: { searchParams: { vendedor?: string } }) {
   const session = await auth();
   const isAdmin = session?.user?.email === ADMIN_EMAIL;
   const vendedorSeleccionado = searchParams.vendedor;
@@ -21,68 +17,99 @@ export default async function DashboardPage({
 
   return (
     <div className="space-y-6">
-      {/* SELECTOR MAESTRO (Solo para Admin) */}
+      {/* SELECTOR MAESTRO - Sutil y profesional */}
       {isAdmin && (
-        <div className="bg-white border-2 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-4">
-          <span className="font-black text-xs uppercase">👁️ Vista de Administrador:</span>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/panel/dashboard" className={`px-3 py-1 border text-[10px] font-bold ${!vendedorSeleccionado ? 'bg-black text-white' : 'bg-white'}`}>TODOS</Link>
-            {Object.entries(CLIENTES).map(([email, info]) => (
-              <Link 
-                key={email} 
-                href={`/panel/dashboard?vendedor=${email}`}
-                className={`px-3 py-1 border text-[10px] font-bold ${vendedorSeleccionado === email ? 'bg-[#E63946] text-white' : 'bg-white'}`}
-              >
-                {info.nombre.toUpperCase()}
-              </Link>
-            ))}
-          </div>
+        <div className="bg-white/50 p-1.5 rounded-2xl border border-slate-200 flex items-center gap-2 overflow-x-auto no-scrollbar max-w-fit">
+          <Link href="/panel/dashboard" className={`px-4 py-1.5 rounded-xl text-[11px] font-bold transition-all ${!vendedorSeleccionado ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-100'}`}>GLOBAL</Link>
+          {Object.entries(CLIENTES).map(([email, info]) => (
+            <Link 
+              key={email} 
+              href={`/panel/dashboard?vendedor=${email}`}
+              className={`px-4 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all ${vendedorSeleccionado === email ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-100'}`}
+            >
+              {info.nombre.toUpperCase()}
+            </Link>
+          ))}
         </div>
       )}
 
-      {/* MÉTRICAS (Cards con tu estilo) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <p className="text-[10px] font-bold text-gray-400 uppercase">Cobrado Mercado Pago</p>
-          <p className="text-3xl font-black">${totalMP.toLocaleString()}</p>
-        </div>
-        <div className="bg-white border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <p className="text-[10px] font-bold text-gray-400 uppercase">Pedidos Transferencia</p>
-          <p className="text-3xl font-black">{pedidos.length}</p>
-        </div>
-        <div className="bg-white border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <p className="text-[10px] font-bold text-gray-400 uppercase">Artículos en Venta</p>
-          <p className="text-3xl font-black">{productos.length}</p>
-        </div>
+      {/* MÉTRICAS CHATAS CON ICONO TRASLÚCIDO */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <MetricCard 
+          title="Ventas Mercado Pago" 
+          value={`$${totalMP.toLocaleString()}`} 
+          icon={<Wallet size={80} />}
+          colorClass="text-blue-500/10" 
+          accentColor="text-blue-600"
+        />
+        <MetricCard 
+          title="Pedidos Transferencia" 
+          value={pedidos.length} 
+          icon={<ShoppingBag size={80} />}
+          colorClass="text-emerald-500/10"
+          accentColor="text-emerald-600"
+        />
+        <MetricCard 
+          title="Artículos Activos" 
+          value={productos.length} 
+          icon={<Box size={80} />}
+          colorClass="text-amber-500/10"
+          accentColor="text-amber-600"
+        />
       </div>
 
-      {/* TABLA DE MOVIMIENTOS */}
-      <div className="bg-white border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-        <div className="bg-black text-white p-3 text-xs font-bold uppercase tracking-widest">
-          Últimos Movimientos {vendedorSeleccionado ? ` - ${CLIENTES[vendedorSeleccionado]?.nombre}` : "(Global)"}
+      {/* TABLA ESTILO CARD MODERNA */}
+      <div className="bg-white rounded-2rem border border-slate-200 shadow-sm overflow-hidden mt-8">
+        <div className="p-6 px-8 flex justify-between items-center border-b border-slate-50">
+          <div>
+            <h3 className="text-base font-bold text-slate-800">Movimientos Recientes</h3>
+            <p className="text-[11px] text-slate-400 uppercase tracking-tighter">Últimas transacciones registradas</p>
+          </div>
+          <Link href="/panel/webhook" className="group flex items-center gap-1 text-[11px] font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-600 hover:text-white transition-all">
+            VER TODO <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+          </Link>
         </div>
-        <table className="w-full text-left">
-          <thead>
-            <tr className="bg-[#F4EFE0] border-b-2 border-black">
-              <th className="p-3 text-[10px] font-black uppercase">Fecha</th>
-              <th className="p-3 text-[10px] font-black uppercase">Detalle</th>
-              <th className="p-3 text-[10px] font-black uppercase">Importe</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pagosMP.length > 0 ? (
-              pagosMP.slice(0, 10).map((p, i) => (
-                <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="p-3 text-xs">{p[1]}</td>
-                  <td className="p-3 text-xs font-bold">{p[2]}</td>
-                  <td className="p-3 text-xs font-black">${Number(p[3]).toLocaleString()}</td>
-                </tr>
-              ))
-            ) : (
-              <tr><td colSpan={3} className="p-10 text-center text-gray-400 italic">No hay movimientos registrados</td></tr>
-            )}
-          </tbody>
-        </table>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="text-slate-400 text-[10px] uppercase tracking-[0.15em] bg-slate-50/50">
+                <th className="px-8 py-3 font-bold">Fecha</th>
+                <th className="px-8 py-3 font-bold">Producto</th>
+                <th className="px-8 py-3 font-bold text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {pagosMP.length > 0 ? (
+                pagosMP.slice(0, 5).map((p, i) => (
+                  <tr key={i} className="hover:bg-slate-50/30 transition-colors">
+                    <td className="px-8 py-4 text-xs text-slate-400 font-medium">{p[1]}</td>
+                    <td className="px-8 py-4 text-sm font-semibold text-slate-700">{p[2]}</td>
+                    <td className="px-8 py-4 text-sm font-black text-slate-900 text-right">${Number(p[3]).toLocaleString()}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan={3} className="p-16 text-center text-slate-300 text-xs italic">Sin movimientos recientes</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MetricCard({ title, value, icon, colorClass, accentColor }: any) {
+  return (
+    <div className="bg-white px-6 py-5 rounded-[1.8rem] border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+      {/* Icono gigante al fondo */}
+      <div className={`absolute -right-2 -bottom-4 ${colorClass} group-hover:scale-110 transition-transform duration-500`}>
+        {icon}
+      </div>
+      
+      <div className="relative z-10">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{title}</p>
+        <p className={`text-2xl font-black ${accentColor} tracking-tight`}>{value}</p>
       </div>
     </div>
   );
