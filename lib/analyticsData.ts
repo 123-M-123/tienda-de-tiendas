@@ -42,6 +42,7 @@ export async function getAnalyticsData(targetEmail?: string) {
           { name: "city" }, 
           { name: "date" }
         ],
+        // Quitamos el dimensionFilter por ahora para ver si trae datos globales
       }),
       cache: 'no-store'
     });
