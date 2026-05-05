@@ -1,37 +1,54 @@
 import { auth } from "@/auth";
-import { getGoogleAccessToken } from "./googleAuth"; // <-- Esto arregla la línea roja
-
-const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
+import { getGoogleAccessToken } from "./googleAuth";
+import { ADMIN_EMAIL, CLIENTES } from "./clientes";
 
 export async function getAnalyticsData(targetEmail?: string) {
   const session = await auth();
-  const userEmail = session?.user?.email;
-  const isAdmin = userEmail === "marcosmarti1980@gmail.com";
+  const userEmail = session?.user?.email?.trim().toLowerCase();
+  
+  if (!userEmail) return { rows: [] };
 
-  // Usamos el mail del selector si es admin, sino el del logueado
-  const emailAFiltrar = (isAdmin && targetEmail) ? targetEmail : userEmail;
+  const isAdmin = userEmail === ADMIN_EMAIL.trim().toLowerCase();
 
-  // Filtro para que el cliente solo vea las visitas a su carpeta/tienda
-  const storeFilter = isAdmin && !targetEmail ? null : {
-    fieldName: "pagePath",
-    stringFilter: { 
-      matchType: "CONTAINS", 
-      value: emailAFiltrar?.split('@')[0] // Filtra por el nombre antes del @ (ej: 'meraki')
-    } 
-  };
+  // 1. DETERMINAR QUÉ ID DE PROPIEDAD USAR
+  // Si sos Admin y elegiste a alguien, usamos el gaId de ese cliente.
+  // Si sos un cliente, buscamos tu gaId en el diccionario.
+  // Por defecto usamos la de Admin (Tienda de Tiendas).
+  let propertyId = process.env.GA4_PROPERTY_ID; 
 
-  const token = await getGoogleAccessToken(); // <-- Función arreglada
+  const emailABuscar = (isAdmin && targetEmail) ? targetEmail : userEmail;
+  
+  if (CLIENTES[emailABuscar]) {
+    propertyId = CLIENTES[emailABuscar].gaId;
+  }
 
-  const res = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
-      metrics: [{ name: "activeUsers" }, { name: "screenPageViews" }],
-      dimensions: [{ name: "city" }, { name: "date" }, { name: "pageTitle" }], // Agregamos pageTitle para el "Más vistos"
-      dimensionFilter: storeFilter ? { filter: storeFilter } : undefined
-    })
-  });
+  try {
+    const token = await getGoogleAccessToken();
+    const url = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
 
-  return await res.json();
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({
+        dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+        metrics: [
+          { name: "activeUsers" }, 
+          { name: "screenPageViews" }
+        ],
+        dimensions: [
+          { name: "city" }, 
+          { name: "date" }
+        ],
+      }),
+      cache: 'no-store'
+    });
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error en GA4 API:", error);
+    return { rows: [] };
+  }
 }

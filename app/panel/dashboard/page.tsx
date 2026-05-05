@@ -79,16 +79,22 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                 <th className="px-8 py-3 font-bold text-right">Monto</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
-              {pagosMP.length > 0 ? (
-                pagosMP.slice(0, 5).map((p, i) => (
-                  <tr key={i} className="hover:bg-slate-50/30 transition-colors">
-                    <td className="px-8 py-4 text-xs text-slate-400 font-medium">{p[1]}</td>
-                    <td className="px-8 py-4 text-sm font-semibold text-slate-700">{p[2]}</td>
-                    <td className="px-8 py-4 text-sm font-black text-slate-900 text-right">${Number(p[3]).toLocaleString()}</td>
-                  </tr>
-                ))
-              ) : (
+           <tbody className="divide-y divide-slate-50">
+  {pagosMP.length > 0 ? (
+    pagosMP.slice(0, 5).map((p, i) => (
+      <tr key={i} className="hover:bg-slate-50/30 transition-colors">
+        <td className="px-8 py-3 text-[10px] text-slate-400 font-medium whitespace-nowrap">{p[1]}</td>
+        <td className="px-8 py-3">
+          <p className="text-sm font-semibold text-slate-700 line-clamp-1 max-w-50">
+            {p[2]}
+          </p>
+        </td>
+        <td className="px-8 py-3 text-sm font-black text-slate-900 text-right whitespace-nowrap">
+          ${Number(p[3]).toLocaleString()}
+        </td>
+      </tr>
+    ))
+  ) : (
                 <tr><td colSpan={3} className="p-16 text-center text-slate-300 text-xs italic">Sin movimientos recientes</td></tr>
               )}
             </tbody>

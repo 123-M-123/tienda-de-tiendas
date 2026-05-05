@@ -3,10 +3,10 @@ import { Store } from "lucide-react"
 
 export default function LoginPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#FDFBF7] p-4 text-[#1A1A1A]">
+    // Cambiado bg-white por el beige del panel
+    <div className="flex items-center justify-center min-h-screen bg-[#e6dcb7] p-4 text-[#1A1A1A]">
       <div className="w-full max-w-md bg-[#F1F5F9] p-10 rounded-[3rem] shadow-sm border border-slate-200 text-center">
         
-        {/* Logo Minimalista */}
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
             <Store className="text-white" size={32} />
