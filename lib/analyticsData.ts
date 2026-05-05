@@ -11,12 +11,11 @@ export async function getAnalyticsData(targetEmail?: string) {
   const isAdmin = userEmail === ADMIN_EMAIL.trim().toLowerCase();
 
   // 1. DETERMINAR QUÉ ID DE PROPIEDAD USAR
-  // Si sos Admin y elegiste a alguien, usamos el gaId de ese cliente.
-  // Si sos un cliente, buscamos tu gaId en el diccionario.
-  // Por defecto usamos la de Admin (Tienda de Tiendas).
+  // Por defecto empezamos con la del Admin (Tienda de Tiendas)
   let propertyId = process.env.GA4_PROPERTY_ID; 
 
-  const emailABuscar = (isAdmin && targetEmail) ? targetEmail : userEmail;
+  // Si sos Admin y elegiste a alguien, o si sos un cliente común, buscamos en el diccionario
+  const emailABuscar = (isAdmin && targetEmail) ? targetEmail.trim().toLowerCase() : userEmail;
   
   if (CLIENTES[emailABuscar]) {
     propertyId = CLIENTES[emailABuscar].gaId;
@@ -25,6 +24,8 @@ export async function getAnalyticsData(targetEmail?: string) {
   try {
     const token = await getGoogleAccessToken();
     const url = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
+
+    console.log(`>>>> [GA4 DEBUG] Intentando leer ID: ${propertyId} para el usuario: ${emailABuscar}`);
 
     const res = await fetch(url, {
       method: 'POST',
@@ -42,14 +43,29 @@ export async function getAnalyticsData(targetEmail?: string) {
           { name: "city" }, 
           { name: "date" }
         ],
-        // Quitamos el dimensionFilter por ahora para ver si trae datos globales
       }),
       cache: 'no-store'
     });
 
-    return await res.json();
+    const data = await res.json();
+
+    // --- ESCANER DE ERRORES PARA VERCEL LOGS ---
+    if (!res.ok) {
+      console.error("❌ ERROR GA4 API:", JSON.stringify(data, null, 2));
+      return { rows: [] };
+    }
+
+    if (!data.rows || data.rows.length === 0) {
+      console.log(`⚠️ GA4 AVISO: La API respondió OK pero no hay datos para el ID ${propertyId} en los últimos 30 días.`);
+    } else {
+      console.log(`✅ GA4 ÉXITO: Se recibieron ${data.rows.length} filas de datos.`);
+    }
+    // --------------------------------------------
+
+    return data;
+
   } catch (error) {
-    console.error("Error en GA4 API:", error);
+    console.error("❌ ERROR CRÍTICO EN ANALYTICS DATA:", error);
     return { rows: [] };
   }
 }
