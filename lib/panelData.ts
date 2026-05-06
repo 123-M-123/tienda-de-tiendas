@@ -12,19 +12,20 @@ export async function getPanelData(pestaña: string, targetEmail?: string) {
   const isAdmin = userEmail === ADMIN_EMAIL.trim().toLowerCase();
 
   // 1. Determinamos el "Email de Referencia"
-  // Si sos admin y elegiste un cliente, usamos ese. Si no, usamos el mail logueado.
   const emailReferencia = (isAdmin && targetEmail) ? targetEmail.trim().toLowerCase() : userEmail;
 
-  // 2. Buscamos el gaId vinculado a ese mail en nuestro diccionario de clientes
+  // 2. Buscamos el gaId vinculado a ese mail
   const gaIdReferencia = CLIENTES[emailReferencia]?.gaId;
 
   try {
     const token = await getGoogleAccessToken();
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(pestaña)}!A2:G1000`;
+    // CORRECCIÓN: Rango ampliado hasta H para incluir Stock
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(pestaña)}!A2:H1000`;
 
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
-      cache: 'no-store'
+      // OPTIMIZACIÓN: Caché de 1 segundo para evitar saturación en navegación
+      next: { revalidate: 1 }
     });
 
     const data = await res.json();
@@ -35,15 +36,12 @@ export async function getPanelData(pestaña: string, targetEmail?: string) {
     // A. Si es Admin y NO eligió a nadie, ve la planilla completa (GLOBAL)
     if (isAdmin && !targetEmail) return rows;
 
-    // B. FILTRO DE SOCIOS:
-    // Filtramos las filas basándonos en el gaId, no solo en el email.
-    // Esto permite que Eliana y Exequiel vean lo mismo porque ambos tienen el mismo gaId.
+    // B. FILTRO DE SOCIOS (gaId):
     return rows.filter(row => {
       const emailEnFila = row[0]?.toString().trim().toLowerCase();
       if (!emailEnFila) return false;
 
-      // Si el gaId del mail que está en la fila coincide con el gaId del que inició sesión:
-      // ¡Bingo! Son del mismo equipo/tienda.
+      // Comparamos gaId para permitir que socios vean los mismos productos
       return CLIENTES[emailEnFila]?.gaId === gaIdReferencia;
     });
 

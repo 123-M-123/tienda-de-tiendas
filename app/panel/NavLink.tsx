@@ -16,21 +16,21 @@ export default function NavLink({ href, label, subLabel, subColor, icon }: NavLi
 
   return (
     <NextLink href={href} className={`
-      flex flex-col items-center justify-center gap-1 p-4 md:p-6 rounded-[2rem] transition-all shrink-0 border-2 min-w-[90px] md:min-w-[120px]
+      flex flex-col items-center justify-center gap-0.5 p-2 md:p-3 rounded-xl transition-all shrink-0 border-2 min-w-[85px] md:min-w-[110px]
       ${isActive 
-        ? 'bg-white border-slate-900 shadow-lg scale-105' 
-        : 'border-transparent hover:bg-white/50 text-slate-500'}
+        ? 'bg-white border-slate-900 shadow-sm' 
+        : 'border-transparent hover:bg-white/40 text-slate-500'}
     `}>
-      {/* Fila 1: Icono y Nombre Principal (Ahora siempre visible) */}
-      <div className="flex flex-col items-center gap-1">
+      {/* Fila 1: Label */}
+      <div className="flex items-center gap-1.5">
         <div className={isActive ? 'text-slate-900' : 'text-slate-400'}>{icon}</div>
-        <span className={`font-black text-[10px] md:text-xs uppercase ${isActive ? 'text-slate-900' : ''}`}>
+        <span className={`font-black text-[10px] uppercase ${isActive ? 'text-slate-900' : ''}`}>
           {label}
         </span>
       </div>
       
-      {/* Fila 2: Subtítulo con su color correspondiente */}
-      <span className={`text-[8px] md:text-[10px] font-bold uppercase tracking-widest ${subColor}`}>
+      {/* Fila 2: SubLabel (Mismo tamaño, todo Mayúsculas) */}
+      <span className={`text-[10px] font-bold uppercase tracking-tighter ${subColor}`}>
         {subLabel}
       </span>
     </NextLink>

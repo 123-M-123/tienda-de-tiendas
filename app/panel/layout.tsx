@@ -42,7 +42,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
             </div>
           </div>
           <form action={async () => { "use server"; await signOut({ redirectTo: "/login" }); }}>
-            <button type="submit" className="p-2 text-slate-400 hover:text-red-600">
+            <button type="submit" className="p-2 text-slate-400 hover:text-red-600 transition-all">
               <LogOut size={18} />
             </button>
           </form>
@@ -69,43 +69,43 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
       <div className="flex flex-col flex-1">
         
-        {/* 3. NAVEGACIÓN GRANDE CON DOBLE FILA */}
-        <aside className="w-full bg-white/50 border-b border-slate-200 p-3 md:p-6 overflow-x-auto no-scrollbar">
-          <nav className="flex flex-row gap-3 md:gap-6 justify-start md:justify-center">
+        {/* 3. NAVEGACIÓN COMPACTA CON TEXTOS IGUALES */}
+        <aside className="w-full bg-white/50 border-b border-slate-200 p-2 md:p-4 overflow-x-auto no-scrollbar">
+          <nav className="flex flex-row gap-2 md:gap-4 justify-start md:justify-center">
             <NavLink 
               href="/panel/dashboard" 
-              label="Resumen" 
-              subLabel="escritorio" 
+              label="PANTALLA" 
+              subLabel="RESUMEN" 
               subColor="text-slate-900" 
-              icon={<LayoutDashboard size={24} />} 
+              icon={<LayoutDashboard size={18} />} 
             />
             <NavLink 
               href="/panel/analytics" 
-              label="Métricas" 
-              subLabel="google" 
+              label="MÉTRICAS" 
+              subLabel="GOOGLE" 
               subColor="text-slate-400" 
-              icon={<BarChart3 size={24} />} 
+              icon={<BarChart3 size={18} />} 
             />
             <NavLink 
               href="/panel/pedidos" 
-              label="Pedidos" 
-              subLabel="off-line" 
+              label="PEDIDOS" 
+              subLabel="OFF-LINE" 
               subColor="text-emerald-600" 
-              icon={<ClipboardList size={24} />} 
+              icon={<ClipboardList size={18} />} 
             />
             <NavLink 
               href="/panel/webhook" 
-              label="Pagos" 
-              subLabel="on-line" 
+              label="PAGOS" 
+              subLabel="ON-LINE" 
               subColor="text-blue-600" 
-              icon={<CreditCard size={24} />} 
+              icon={<CreditCard size={18} />} 
             />
             <NavLink 
               href="/panel/productos" 
-              label="Productos" 
-              subLabel="gestión" 
+              label="PRODUCTOS" 
+              subLabel="GESTIÓN" 
               subColor="text-orange-600" 
-              icon={<Package size={24} />} 
+              icon={<Package size={18} />} 
             />
           </nav>
         </aside>

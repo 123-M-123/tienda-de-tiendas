@@ -2,6 +2,7 @@
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { getGoogleAccessToken } from "./googleAuth";
+import { ADMIN_EMAIL } from "./clientes";
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 
@@ -21,22 +22,24 @@ export async function saveProduct(formData: FormData, isEdit: boolean = false) {
     const idProducto = formData.get("id") as string;
     const rawImg = formData.get("img") as string;
     const directImgLink = getDriveDirectLink(rawImg);
+    
+    // Si es admin y estamos editando, deberíamos intentar mantener el vendedor original 
+    // o usar el vendedor seleccionado en el selector de admin.
+    const vendedorFinal = formData.get("vendedorOriginal")?.toString() || session.user.email;
 
-    // NUEVO MAPEO CON STOCK (Columna H)
-    // A: Vendedor | B: ID | C: Título | D: Precio | E: Desc | F: Img | G: Cat | H: Stock
+    // MAPEO ESTRICTO: A:Vendedor | B:ID | C:Título | D:Precio | E:Desc | F:Img | G:Cat | H:Stock
     const filaDatos = [
-      session.user.email,       // A
+      vendedorFinal,            // A
       idProducto,               // B
       formData.get("titulo"),   // C
       formData.get("precio"),   // D
       formData.get("desc"),     // E
       directImgLink,            // F
       formData.get("cat"),      // G
-      formData.get("stock")     // H (¡NUEVO!)
+      formData.get("stock")     // H
     ];
 
     if (!isEdit) {
-      // Rango ampliado a H
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent('Carga de productos!A:H')}:append?valueInputOption=RAW`;
       await fetch(url, {
         method: 'POST',
@@ -44,21 +47,30 @@ export async function saveProduct(formData: FormData, isEdit: boolean = false) {
         body: JSON.stringify({ values: [filaDatos] }),
       });
     } else {
+      // Proceso de Edición
       const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent('Carga de productos!B:B')}`;
       const res = await fetch(readUrl, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       const rows = data.values || [];
-      const index = rows.findIndex((row: any) => row[0] === idProducto);
+      
+      // Buscamos el ID ignorando mayúsculas/minúsculas y espacios
+      const index = rows.findIndex((row: any) => 
+        row[0]?.toString().trim() === idProducto.trim()
+      );
 
       if (index !== -1) {
         const rowNumber = index + 1; 
-        // Actualizamos de A hasta H
         const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(`Carga de productos!A${rowNumber}:H${rowNumber}`)}?valueInputOption=RAW`;
-        await fetch(updateUrl, {
+        
+        const response = await fetch(updateUrl, {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ values: [filaDatos] }),
         });
+
+        if (!response.ok) throw new Error("Error al actualizar en Sheets");
+      } else {
+        return { error: "Producto no encontrado para editar" };
       }
     }
 
@@ -66,6 +78,6 @@ export async function saveProduct(formData: FormData, isEdit: boolean = false) {
     return { success: true };
   } catch (error) {
     console.error("Error saveProduct:", error);
-    return { error: "Error" };
+    return { error: "Error de sincronización con Google Sheets" };
   }
 }
