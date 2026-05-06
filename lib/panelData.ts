@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { ADMIN_EMAIL } from "./clientes";
+import { ADMIN_EMAIL, CLIENTES } from "./clientes";
 import { getGoogleAccessToken } from "./googleAuth";
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
@@ -10,7 +10,13 @@ export async function getPanelData(pestaña: string, targetEmail?: string) {
 
   const userEmail = session.user.email.trim().toLowerCase();
   const isAdmin = userEmail === ADMIN_EMAIL.trim().toLowerCase();
-  const emailAFiltrar = (isAdmin && targetEmail) ? targetEmail.trim().toLowerCase() : userEmail;
+
+  // 1. Determinamos el "Email de Referencia"
+  // Si sos admin y elegiste un cliente, usamos ese. Si no, usamos el mail logueado.
+  const emailReferencia = (isAdmin && targetEmail) ? targetEmail.trim().toLowerCase() : userEmail;
+
+  // 2. Buscamos el gaId vinculado a ese mail en nuestro diccionario de clientes
+  const gaIdReferencia = CLIENTES[emailReferencia]?.gaId;
 
   try {
     const token = await getGoogleAccessToken();
@@ -24,12 +30,23 @@ export async function getPanelData(pestaña: string, targetEmail?: string) {
     const data = await res.json();
     const rows = (data.values as any[][]) || [];
 
+    // --- LÓGICA DE FILTRADO MAESTRO ---
+
+    // A. Si es Admin y NO eligió a nadie, ve la planilla completa (GLOBAL)
     if (isAdmin && !targetEmail) return rows;
 
-    // Filtro mejorado: trim y lowercase en ambos lados para evitar errores de tipeo
-    return rows.filter(row => 
-      row[0] && row[0].toString().trim().toLowerCase() === emailAFiltrar
-    );
+    // B. FILTRO DE SOCIOS:
+    // Filtramos las filas basándonos en el gaId, no solo en el email.
+    // Esto permite que Eliana y Exequiel vean lo mismo porque ambos tienen el mismo gaId.
+    return rows.filter(row => {
+      const emailEnFila = row[0]?.toString().trim().toLowerCase();
+      if (!emailEnFila) return false;
+
+      // Si el gaId del mail que está en la fila coincide con el gaId del que inició sesión:
+      // ¡Bingo! Son del mismo equipo/tienda.
+      return CLIENTES[emailEnFila]?.gaId === gaIdReferencia;
+    });
+
   } catch (error) {
     console.error("Error en getPanelData:", error);
     return [];
