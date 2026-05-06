@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
 import { saveProduct } from "@/lib/productActions";
-import { Plus, Edit3, X, Box, Image as ImageIcon, AlignLeft } from "lucide-react";
+import { Plus, Edit3, X, Box, Image as ImageIcon, AlignLeft, Hash } from "lucide-react";
 
 export default function ProductTable({ initialData }: { initialData: any[] }) {
   const [showModal, setShowModal] = useState(false);
@@ -24,12 +24,13 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
       {/* CONTENEDOR CON SCROLL Y ALTURA LIMITADA */}
       <div className="bg-[#F1F5F9] rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
         <div className="max-h-[500px] overflow-y-auto overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead className="sticky top-0 z-10 bg-[#F1F5F9] border-b border-slate-200">
               <tr className="text-slate-400 text-[10px] uppercase tracking-widest">
                 <th className="px-8 py-4 font-bold">ID</th>
                 <th className="px-8 py-4 font-bold">Producto</th>
                 <th className="px-8 py-4 font-bold">Precio</th>
+                <th className="px-8 py-4 font-bold text-center">Stock</th>
                 <th className="px-8 py-4 font-bold text-center">Acciones</th>
               </tr>
             </thead>
@@ -39,6 +40,11 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
                   <td className="px-8 py-4 text-[10px] font-mono text-slate-400">{row[1]}</td>
                   <td className="px-8 py-4 text-sm font-bold text-slate-700 truncate max-w-[250px]">{row[2]}</td>
                   <td className="px-8 py-4 text-sm font-black text-slate-900">${Number(row[3]).toLocaleString()}</td>
+                  <td className="px-8 py-4 text-center">
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${Number(row[7]) > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                      {row[7] || 0} U.
+                    </span>
+                  </td>
                   <td className="px-8 py-4 text-center">
                     <button onClick={() => openModal(row)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
                       <Edit3 size={18} />
@@ -64,7 +70,6 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
             </h3>
 
             <form action={async (fd) => { await saveProduct(fd, !!editingProd); setShowModal(false); }} className="space-y-4">
-              {/* ID oculto para edición, o generado para nuevo */}
               <input type="hidden" name="id" value={editingProd ? editingProd[1] : `P-${Date.now().toString().slice(-6)}`} />
               
               <div>
@@ -72,14 +77,19 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
                 <input name="titulo" defaultValue={editingProd?.[2] || ""} className="w-full bg-[#F1F5F9] border-none p-4 rounded-2xl font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none" required />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* FILA DE 3 COLUMNAS: PRECIO, CATEGORÍA Y STOCK */}
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Precio ($)</label>
                   <input name="precio" type="number" defaultValue={editingProd?.[3] || ""} className="w-full bg-[#F1F5F9] border-none p-4 rounded-2xl font-bold text-slate-700 outline-none" required />
                 </div>
                 <div>
                   <label className="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Categoría</label>
-                  <input name="cat" defaultValue={editingProd?.[6] || ""} className="w-full bg-[#F1F5F9] border-none p-4 rounded-2xl font-bold text-slate-700 outline-none" placeholder="Ej: Mieles" />
+                  <input name="cat" defaultValue={editingProd?.[6] || ""} className="w-full bg-[#F1F5F9] border-none p-4 rounded-2xl font-bold text-slate-700 outline-none" placeholder="Rubro" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block tracking-widest">Stock</label>
+                  <input name="stock" type="number" defaultValue={editingProd?.[7] || ""} className="w-full bg-[#F1F5F9] border-none p-4 rounded-2xl font-bold text-slate-700 outline-none" placeholder="Cant." />
                 </div>
               </div>
 
