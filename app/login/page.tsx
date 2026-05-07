@@ -1,39 +1,44 @@
 import { signIn } from "@/auth"
-import { Store } from "lucide-react"
 
 export default function LoginPage() {
   return (
-    // Cambiado bg-white por el beige del panel
-    <div className="flex items-center justify-center min-h-screen bg-[#e6dcb7] p-4 text-[#1A1A1A]">
-      <div className="w-full max-w-md bg-[#F1F5F9] p-10 rounded-[3rem] shadow-sm border border-slate-200 text-center">
+    // 1. CONTROL DE ALTURA TOTAL: Cambié 'items-center' por 'items-start' y añadí 'pt-20'
+    <div className="flex justify-center items-start min-h-screen bg-[#e6dcb7] p-4 pt-20">
+      
+      {/* CONTENEDOR PRINCIPAL (LA CARD) 
+          - Se agregó 'active:scale-95' para que en mobile todo el bloque reaccione al tocarlo
+      */}
+      <div className="group relative w-full max-w-[400px] transition-all duration-300 ease-in-out hover:scale-105 hover:rotate-1 active:scale-95">
         
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg">
-            <Store className="text-white" size={32} />
-          </div>
+        {/* 2. IMAGEN JPG CON 50% TRANSPARENCIA (opacity-50) */}
+        <img 
+          src="/boton-ingreso.jpg" 
+          alt="Ingreso" 
+          className="w-full h-auto rounded-[3rem] shadow-xl opacity-75"
+        />
+
+        {/* 3. CONTENEDOR DEL BOTÓN SUPERPUESTO
+            - CONTROL DE ALTURA DEL BOTÓN: El valor de 'bottom-14' lo sube o baja dentro de la imagen
+        */}
+        <div className="absolute inset-x-0 bottom-12 flex justify-center px-6">
+          <form
+            className="w-full max-w-[290px]" // 4. Achicado un 10% (de 320 a 290)
+            action={async () => {
+              "use server"
+              await signIn("google", { redirectTo: "/panel/dashboard" })
+            }}
+          >
+            <button 
+              type="submit" 
+              className="flex items-center justify-center w-full gap-3 px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-2xl transition-all duration-200 font-bold shadow-sm hover:bg-slate-900 hover:text-white text-lg" // text-lg sube un 10% el tamaño de letra
+            >
+              {/* Favicon 7x7 (28px x 28px en Tailwind es w-7 h-7) */}
+              <img src="https://www.google.com/favicon.ico" alt="G" className="w-7 h-7" />
+              Continuar con Google
+            </button>
+          </form>
         </div>
 
-        <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Tienda de Tiendas</h1>
-        <p className="text-slate-500 text-sm font-medium mb-8">Ingresá al panel de gestión</p>
-        
-        <form
-          action={async () => {
-            "use server"
-            await signIn("google", { redirectTo: "/panel/dashboard" })
-          }}
-        >
-          <button 
-            type="submit" 
-            className="flex items-center justify-center w-full gap-3 px-6 py-4 bg-white text-slate-900 border border-slate-200 rounded-2xl hover:bg-slate-900 hover:text-white transition-all font-bold shadow-sm"
-          >
-            <img src="https://www.google.com/favicon.ico" alt="G" className="w-4 h-4" />
-            Continuar con Google
-          </button>
-        </form>
-
-        <p className="mt-8 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
-          Acceso Seguro • Encriptado
-        </p>
       </div>
     </div>
   )

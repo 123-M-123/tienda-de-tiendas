@@ -65,7 +65,7 @@ export default function Footer() {
 
           {/* IMAGEN COSTADO */}
           <Image
-            src="/favicon.png"
+            src="/logo T de T.png"
             alt="Tienda de Tiendas"
             width={140}
             height={140}
