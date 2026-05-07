@@ -21,7 +21,10 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
         <Plus size={16} /> Nuevo Artículo
       </button>
 
-      <div className="bg-white rounded-xl border border-slate-300 shadow-sm overflow-hidden">
+      // ... (mismo encabezado y imports)
+
+      {/* CONTENEDOR CON SCROLL - Sin bg-white */}
+      <div className="rounded-xl border border-slate-300 shadow-sm overflow-hidden">
         <div className="max-h-125 overflow-y-auto overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse min-w-175">
             <thead className="sticky top-0 z-10 bg-slate-900 text-white text-[10px] uppercase font-bold">
@@ -33,19 +36,19 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
                 <th className="px-6 py-4 text-center">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 bg-[#e6dcb7]/10">
+            <tbody className="divide-y divide-slate-300">
               {initialData.map((row, i) => (
-                <tr key={i} className="hover:bg-white/50 transition-colors">
-                  <td className="px-6 py-4 text-[10px] font-mono text-slate-400">{row[1]}</td>
-                  <td className="px-6 py-4 text-sm font-bold text-slate-700 line-clamp-2 max-w-62.5">{row[2]}</td>
+                <tr key={i} className="hover:bg-white/20 transition-colors">
+                  <td className="px-6 py-4 text-[10px] font-mono text-slate-500">{row[1]}</td>
+                  <td className="px-6 py-4 text-sm font-bold text-slate-800 line-clamp-2 max-w-62.5">{row[2]}</td>
                   <td className="px-6 py-4 text-sm font-black text-slate-900">${Number(row[3]).toLocaleString()}</td>
                   <td className="px-6 py-4 text-center">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${Number(row[7]) > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${Number(row[7]) > 0 ? 'bg-emerald-50/50 text-emerald-700 border-emerald-200' : 'bg-amber-50/50 text-amber-700 border-amber-200'}`}>
                       {row[7] || 0} U.
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <button onClick={() => openModal(row)} className="p-2 text-slate-400 hover:text-blue-600 rounded-lg transition-all">
+                    <button onClick={() => openModal(row)} className="p-2 text-slate-500 hover:text-blue-600 rounded-lg transition-all">
                       <Edit3 size={18} />
                     </button>
                   </td>
@@ -55,6 +58,8 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
           </table>
         </div>
       </div>
+
+// ... (resto del modal igual)
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
