@@ -65,7 +65,7 @@ export default function HeroSection() {
           </div>
 
           <h2 className="font-bold mb-2">
-            Perfil Argento
+            Perfil Emprendedor
           </h2>
 
           <p className="text-sm">

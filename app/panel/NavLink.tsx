@@ -16,7 +16,7 @@ export default function NavLink({ href, label, subLabel, subColor, icon }: NavLi
 
   return (
     <NextLink href={href} className={`
-      flex flex-col items-center justify-center gap-0.5 p-2 md:p-3 rounded-xl transition-all shrink-0 border-2 min-w-[85px] md:min-w-[110px]
+      flex flex-col items-center justify-center gap-0.5 p-2 md:p-3 rounded-xl transition-all shrink-0 border-2 min-w-21.25 md:min-w-27.5
       ${isActive 
         ? 'bg-white border-slate-900 shadow-sm' 
         : 'border-transparent hover:bg-white/40 text-slate-500'}

@@ -50,11 +50,11 @@ export default function BeneficiosSection() {
           </p>
         </div>
 
-        {/* PERFIL ARGENTO */}
+        {/* PERFIL emprendedor */}
         <div className="border rounded-xl p-6 text-left hover:shadow-lg transition">
           <div className="flex items-center gap-2 mb-3">
             <Landmark size={20} />
-            <h2 className="font-bold text-lg">Perfil Argento</h2>
+            <h2 className="font-bold text-lg">Perfil Emprendedor</h2>
           </div>
 
           <p className="text-sm leading-relaxed">

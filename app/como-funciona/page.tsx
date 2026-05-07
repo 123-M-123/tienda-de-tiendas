@@ -112,7 +112,7 @@ export default function ComoFuncionaSection() {
           </div>
 
           <div className="border rounded-xl p-4">
-            <h3 className="font-bold mb-2">Perfil Argento</h3>
+            <h3 className="font-bold mb-2">Perfil Emprendedor</h3>
             <p>
               Enfoque práctico para salir a vender rápido,
               cuidando inversión inicial.

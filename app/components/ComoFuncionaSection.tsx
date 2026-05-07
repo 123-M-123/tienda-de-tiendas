@@ -113,7 +113,7 @@ export default function ComoFuncionaSection() {
           </div>
 
           <div className="border rounded-xl p-4">
-            <h4 className="font-bold mb-2">Perfil Argento</h4>
+            <h4 className="font-bold mb-2">Perfil Emprendedor</h4>
             <p>
               Incluye de 3 a 5 niveles/etapas de versiones de avance de diseño.
               Enfoque práctico para salir a vender rápido sin gastar de más.
