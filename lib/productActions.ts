@@ -2,7 +2,6 @@
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { getGoogleAccessToken } from "./googleAuth";
-import { ADMIN_EMAIL } from "./clientes";
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 
@@ -23,9 +22,11 @@ export async function saveProduct(formData: FormData, isEdit: boolean = false) {
     const rawImg = formData.get("img") as string;
     const directImgLink = getDriveDirectLink(rawImg);
     
-    // Si es admin y estamos editando, deberíamos intentar mantener el vendedor original 
-    // o usar el vendedor seleccionado en el selector de admin.
-    const vendedorFinal = formData.get("vendedorOriginal")?.toString() || session.user.email;
+    // PROTECCIÓN DE PROPIEDAD: 
+    // Si editamos, usamos el vendedor que ya tenía el producto (vendedorOriginal).
+    // Si es nuevo, usamos el mail del que está logueado.
+    const vendedorOriginal = formData.get("vendedorOriginal")?.toString();
+    const vendedorFinal = (isEdit && vendedorOriginal) ? vendedorOriginal : session.user.email;
 
     // MAPEO ESTRICTO: A:Vendedor | B:ID | C:Título | D:Precio | E:Desc | F:Img | G:Cat | H:Stock
     const filaDatos = [
@@ -47,13 +48,12 @@ export async function saveProduct(formData: FormData, isEdit: boolean = false) {
         body: JSON.stringify({ values: [filaDatos] }),
       });
     } else {
-      // Proceso de Edición
+      // Proceso de Edición: Buscamos la fila por ID (Columna B)
       const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent('Carga de productos!B:B')}`;
       const res = await fetch(readUrl, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       const rows = data.values || [];
       
-      // Buscamos el ID ignorando mayúsculas/minúsculas y espacios
       const index = rows.findIndex((row: any) => 
         row[0]?.toString().trim() === idProducto.trim()
       );

@@ -65,8 +65,13 @@ export default function ProductTable({ initialData }: { initialData: any[] }) {
             <h3 className="text-xl font-black text-black mb-6 flex items-center gap-3 uppercase tracking-tighter">
                <Box size={20} /> {editingProd ? "Editar Artículo" : "Nuevo Artículo"}
             </h3>
+            
             <form action={async (fd) => { await saveProduct(fd, !!editingProd); setShowModal(false); }} className="space-y-4">
+              {/* CAMPO VITAL: Preserva el email original del vendedor durante la edición */}
+              <input type="hidden" name="vendedorOriginal" value={editingProd ? editingProd[0] : ""} />
+              
               <input type="hidden" name="id" value={editingProd ? editingProd[1] : `P-${Date.now().toString().slice(-6)}`} />
+              
               <div>
                 <label className="text-[10px] font-black text-slate-500 uppercase ml-1 mb-1 block">Nombre</label>
                 <input name="titulo" defaultValue={editingProd?.[2] || ""} className="w-full bg-white border border-black/20 p-3 rounded-lg font-bold text-black focus:border-black outline-none" required />
