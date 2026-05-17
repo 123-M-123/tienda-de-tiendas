@@ -3,7 +3,7 @@ import NextLink from "next/link";
 import { ADMIN_EMAIL, CLIENTES } from "@/lib/clientes";
 import { 
   LayoutDashboard, ClipboardList, CreditCard, 
-  Package, Store, BarChart3, LogOut 
+  Package, Store, BarChart3, LogOut, Image 
 } from "lucide-react";
 import NavLink from "./NavLink";
 
@@ -69,7 +69,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
       <div className="flex flex-col flex-1">
         
-        {/* 3. NAVEGACIÓN COMPACTA CON TEXTOS IGUALES */}
+        {/* 3. NAVEGACIÓN COMPACTA (Ahora con 6 botones) */}
         <aside className="w-full bg-white/50 border-b border-slate-200 p-2 md:p-4 overflow-x-auto no-scrollbar">
           <nav className="flex flex-row gap-2 md:gap-4 justify-start md:justify-center">
             <NavLink 
@@ -106,6 +106,14 @@ export default async function PanelLayout({ children }: { children: React.ReactN
               subLabel="GESTIÓN" 
               subColor="text-orange-600" 
               icon={<Package size={18} />} 
+            />
+            {/* NUEVO BOTÓN: PUBLICIDAD / BANNERS */}
+            <NavLink 
+              href="/panel/banners" 
+              label="PUBLICIDAD" 
+              subLabel="BANNERS" 
+              subColor="text-purple-600" 
+              icon={<Image size={18} />} 
             />
           </nav>
         </aside>
