@@ -4,13 +4,13 @@ import { appendWebhookPayment } from '@/lib/masterSheet';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    console.log('🔔 WEBHOOK RECIBIDO EN TdeT:', body);
+    console.log('🔔 WEBHOOK RECIBIDO:', body);
 
-    // Si MP avisa que hubo un pago:
-    if (body.type === 'payment' || body.action === 'payment.created') {
-      const paymentId = body.data?.id || body.resource?.split('/').pop();
+    // 1. Detectamos cualquier acción de pago (created o updated)
+    if (body.type === 'payment' || body.action?.includes('payment')) {
+      const paymentId = body.data?.id || body.id;
 
-      // 1. Le preguntamos a MP los detalles de ese pago
+      // 2. Consultamos a Mercado Pago
       const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
         headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` }
       });
@@ -18,32 +18,39 @@ export async function POST(req: Request) {
       const p = await mpRes.json();
 
       if (mpRes.ok) {
-        // 2. Extraemos el vendedor que inyectamos en la metadata desde Glamour
-        // Si no viene en metadata, intentamos external_reference
+        // --- CASO REAL: El pago existe en Mercado Pago ---
         const vendedor = p.metadata?.vendedor || p.external_reference || "Vendedor Desconocido";
-        
-        // 3. Formateamos la fila para tu Maestra (7 columnas)
         const rowData = [
-          vendedor,                             // Col A: Vendedor
-          new Date(p.date_approved || p.date_created).toLocaleString('es-AR'), // Col B: Fecha
-          p.description || "Pedido Online",     // Col C: Productos
-          p.transaction_amount,                 // Col D: Precio
-          p.status === 'approved' ? 'PAGADO' : p.status, // Col E: Estado
-          paymentId.toString(),                 // Col F: Comprobante/ID
-          p.payment_method_id                   // Col G: Notas/Método
+          vendedor,
+          new Date(p.date_approved || p.date_created).toLocaleString('es-AR'),
+          p.description || "Pedido Online",
+          p.transaction_amount,
+          p.status === 'approved' ? 'PAGADO' : p.status,
+          paymentId.toString(),
+          p.payment_method_id
         ];
-
-        // 4. Guardamos en la Maestra automáticamente
         await appendWebhookPayment(rowData);
-        console.log('✅ PAGO REGISTRADO EN MAESTRA:', vendedor);
+        console.log('✅ PAGO REAL REGISTRADO:', vendedor);
+      } else {
+        // --- CASO SIMULADOR: El pago no existe en MP, pero grabamos igual para probar ---
+        console.warn('⚠️ Pago no encontrado en MP (Probablemente simulador). Grabando datos de prueba...');
+        const testRow = [
+          "test@tienda.com", 
+          new Date().toLocaleString('es-AR'),
+          "SIMULACIÓN MP",
+          "1.00",
+          "TEST",
+          paymentId.toString(),
+          "Webhoock Simulator"
+        ];
+        await appendWebhookPayment(testRow);
       }
     }
 
-    // Respondemos 200 rápido a MP para que no reintente
     return new NextResponse('OK', { status: 200 });
 
   } catch (error) {
-    console.error('❌ ERROR EN WEBHOOK CENTRAL:', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    console.error('❌ ERROR WEBHOOK:', error);
+    return new NextResponse('Error', { status: 500 });
   }
 }
