@@ -23,4 +23,7 @@ export const CLIENTES: Record<string, ClienteInfo> = {
   // EL CAMPITO
   "elianamarti90@gmail.com":   { nombre: "El Campito", gaId: "534606659" },
   "exequiel.devita@gmail.com": { nombre: "El Campito", gaId: "534606659" },
+
+  // GLA
+  "gla_142@hotmail.com": { nombre: "GLA", gaId: "537730087" },
 };

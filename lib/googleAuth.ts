@@ -1,17 +1,32 @@
 // lib/googleAuth.ts
+import { GoogleAuth } from 'google-auth-library';
 
 export async function getGoogleAccessToken() {
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      client_id: process.env.GOOGLE_CLIENT_ID || '',
-      client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
-      refresh_token: process.env.GOOGLE_REFRESH_TOKEN || '',
-      grant_type: 'refresh_token',
-    }),
-  });
-  const data = await res.json();
-  if (!data.access_token) throw new Error("Fallo al obtener el token de Google");
-  return data.access_token;
+  try {
+    // 1. Cargamos las credenciales desde el .env
+    const auth = new GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Corregimos saltos de línea
+      },
+      // Scopes para Analytics y Sheets (los dos que usa tu proyecto)
+      scopes: [
+        'https://www.googleapis.com/auth/analytics.readonly',
+        'https://www.googleapis.com/auth/spreadsheets',
+      ],
+    });
+
+    // 2. Obtenemos el cliente y el token
+    const client = await auth.getClient();
+    const tokenResponse = await client.getAccessToken();
+
+    if (!tokenResponse.token) {
+      throw new Error("No se pudo generar el token de acceso");
+    }
+
+    return tokenResponse.token;
+  } catch (error) {
+    console.error("Error en getGoogleAccessToken (Service Account):", error);
+    throw error;
+  }
 }
