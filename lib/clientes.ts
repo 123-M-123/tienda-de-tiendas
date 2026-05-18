@@ -24,6 +24,18 @@ export const CLIENTES: Record<string, ClienteInfo> = {
   "elianamarti90@gmail.com":   { nombre: "El Campito", gaId: "534606659" },
   "exequiel.devita@gmail.com": { nombre: "El Campito", gaId: "534606659" },
 
-  // GLA
-  "gla_142@hotmail.com": { nombre: "GLA", gaId: "537730087" },
+  // GLAMOUR
+  "gla_142@hotmail.com": { nombre: "Glamour", gaId: "537730087" },
+};
+
+// 🔐 HELPER PARA WHITELISTING
+export const esUsuarioAutorizado = (email: string | null | undefined): boolean => {
+  if (!email) return false;
+  const emailLower = email.toLowerCase();
+  return emailLower === ADMIN_EMAIL || !!CLIENTES[emailLower];
+};
+
+// 🏷️ HELPER PARA OBTENER NOMBRE DE TIENDA
+export const getNombreTienda = (email: string): string => {
+  return CLIENTES[email.toLowerCase()]?.nombre || "Tienda de Tiendas";
 };
