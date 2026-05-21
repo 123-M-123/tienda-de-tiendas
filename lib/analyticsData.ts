@@ -2,7 +2,7 @@
 import { auth } from "@/auth";
 import { getGoogleAccessToken } from "./googleAuth";
 import { ADMIN_EMAIL, CLIENTES } from "./clientes";
-
+import { getAnalyticsAccessToken } from "./googleAuth";
 export async function getAnalyticsData(targetEmail?: string) {
   const session = await auth();
   const userEmail = session?.user?.email?.trim().toLowerCase();
@@ -23,7 +23,7 @@ export async function getAnalyticsData(targetEmail?: string) {
 
   try {
     // 2. Obtenemos el token (Ahora viene de la Service Account vía googleAuth.ts)
-    const token = await getGoogleAccessToken();
+    const token = await getAnalyticsAccessToken();
     const url = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
 
     const res = await fetch(url, {
