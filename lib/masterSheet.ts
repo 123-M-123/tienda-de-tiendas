@@ -15,7 +15,7 @@ export async function appendWebhookPayment(row: any[]) {
   try {
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: "'webhoock MP'!A:G", // Nombre exacto de tu solapa
+      range: "'webhoock MP'!A:J", // 👈 Aumentado a J para los nuevos datos
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [row],
