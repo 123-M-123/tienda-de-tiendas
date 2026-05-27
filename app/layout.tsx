@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
   manifest: "/manifest.json",
 
-  themeColor: "#4A0606",
+  themeColor: "#000000",
 
   icons: {
     icon: "/favicon.png",
@@ -70,7 +70,7 @@ export default function RootLayout({
         />
 
         {/* SEO base */}
-        <meta name="theme-color" content="#4A0606" />
+        <meta name="theme-color" content="#000000" />
         <link rel="manifest" href="/manifest.json" />
 
         {/* OG FIX (WhatsApp / Facebook / etc) */}
