@@ -143,6 +143,9 @@ dependencies:
   zod:
     specifier: 3.25.67
     version: 3.25.67
+  zustand:
+    specifier: ^5.0.14
+    version: 5.0.14(@types/react@18.3.28)(react@18.3.1)
 
 devDependencies:
   '@tailwindcss/postcss':
@@ -8220,3 +8223,25 @@ packages:
 
   /zod@3.25.67:
     resolution: {integrity: sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw==}
+
+  /zustand@5.0.14(@types/react@18.3.28)(react@18.3.1):
+    resolution: {integrity: sha512-/8tAspM5LMPr28b3fwLYrtdj77ECpfZviaP75CMTnwO8ISyaE4GDIG/9rDDYq/cH9D2Xw2A2RXglLInmVBQB/g==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+    dependencies:
+      '@types/react': 18.3.28
+      react: 18.3.1
+    dev: false

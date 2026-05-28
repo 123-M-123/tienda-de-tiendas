@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { 
   Menu, X, ChevronDown, ChevronUp, 
   BookOpen, LayoutDashboard, Settings, 
   MessageSquare, ChevronRight 
 } from 'lucide-react'
 
-// Fila 2 (Oculta en el Header)
+// Fila 2 (Oculta en el Header - Glassmorphism)
 const hiddenRow = [
   { href: '/beneficios', label: 'Beneficios' },
   { href: '/como-funciona', label: 'Cómo funciona' },
@@ -18,23 +18,26 @@ const hiddenRow = [
   { href: '/compara', label: 'Compará' },
 ]
 
-// Fila 1 (Visible en el Header)
+// Fila 1 (Visible en el Header - Navegación Principal)
 const mainRow = [
   { href: '/', label: 'Inicio' },
   { href: '/panel', label: 'Panel Cliente' },
   { href: '/#contacto', label: 'Empezar' },
 ]
 
-// Navegador Lateral (Sidebar - Lo nuevo)
+// Navegador Lateral (Sidebar - Secciones Técnicas)
 const sideNavItems = [
-  { href: '/docs', label: 'Documentación', icon: <BookOpen size={18} /> },
+  { href: '#', label: 'Documentación', icon: <BookOpen size={18} /> },
   { href: '/panel/dashboard', label: 'Panel de Control', icon: <LayoutDashboard size={18} /> },
-  { href: '/ajustes', label: 'Configuración SaaS', icon: <Settings size={18} /> },
+  { href: '#', label: 'Configuración SaaS', icon: <Settings size={18} /> },
   { href: 'https://wa.me/5491153778475', label: 'Soporte Técnico', icon: <MessageSquare size={18} /> },
 ]
 
 export default function Header() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const vendedor = searchParams.get("vendedor")
+  
   const [isRow2Open, setIsRow2Open] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
@@ -43,12 +46,18 @@ export default function Header() {
     return pathname === href
   }
 
+  // Helper para persistencia del vendedor en todos los links
+  const getHref = (href: string) => {
+    if (href.startsWith('http') || href === '#') return href;
+    return vendedor ? `${href}?vendedor=${vendedor}` : href;
+  }
+
   return (
     <>
       {/* --- HEADER PRINCIPAL --- */}
-      <header className="sticky top-0 z-[60] bg-black border-b border-white/10 shadow-2xl">
+      <header className="sticky top-0 z-60 bg-black border-b border-white/10 shadow-2xl">
         
-        {/* BOTÓN HAMBURGUESA (IZQUIERDA) - Dispara Sidebar */}
+        {/* BOTÓN HAMBURGUESA (IZQUIERDA) */}
         <button 
           onClick={() => setIsSidebarOpen(true)}
           className="absolute left-4 top-6 p-2 text-white/70 hover:text-red-600 transition-colors"
@@ -56,9 +65,9 @@ export default function Header() {
           <Menu size={24} />
         </button>
 
-        {/* LOGO CENTRAL: logo-nuevo.png */}
+        {/* LOGO CENTRAL */}
         <div className="max-w-5xl mx-auto px-4 py-4 flex justify-center">
-          <Link href="/">
+          <Link href={getHref('/')}>
             <Image
               src="/logo-nuevo.png"
               alt="Tienda de Tiendas"
@@ -71,15 +80,15 @@ export default function Header() {
         </div>
 
         <div className="border-t border-white/5 bg-neutral-950">
-          {/* FILA 1: NAVEGACIÓN */}
+          {/* FILA 1: NAVEGACIÓN CENTRAL */}
           <div className="max-w-3xl mx-auto px-3 py-2 relative flex items-center justify-center">
             <nav className="flex justify-center gap-1">
               {mainRow.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={getHref(item.href)}
                   className={`
-                    px-4 py-2 min-w-[75px] rounded-full text-center transition-all text-[11px] md:text-xs font-bold uppercase tracking-tight
+                    px-4 py-2 min-w-18.75 rounded-full text-center transition-all text-[11px] md:text-xs font-bold uppercase tracking-tight
                     ${isActive(item.href)
                       ? 'bg-red-600 text-white'
                       : 'text-white/60 hover:text-white hover:bg-white/5'
@@ -101,7 +110,7 @@ export default function Header() {
             </button>
           </div>
 
-          {/* FILA 2: GLASSMORPHISM */}
+          {/* FILA 2: DESPLEGABLE CON GLASSMORPHISM */}
           <div
             className={`
               overflow-hidden transition-all duration-500 ease-in-out
@@ -112,7 +121,7 @@ export default function Header() {
               {hiddenRow.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={getHref(item.href)}
                   className="text-[10px] font-black uppercase tracking-[0.15em] text-white/40 hover:text-red-600 transition-colors"
                 >
                   {item.label}
@@ -123,9 +132,9 @@ export default function Header() {
         </div>
       </header>
 
-      {/* --- SIDEBAR LATERAL (NUEVO NAVEGADOR) --- */}
+      {/* --- SIDEBAR LATERAL (NAVEGADOR TÉCNICO) --- */}
       <div 
-        className={`fixed inset-0 z-[70] transition-all duration-500 ${
+        className={`fixed inset-0 z-70 transition-all duration-500 ${
           isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
@@ -137,14 +146,14 @@ export default function Header() {
 
         {/* Panel Sidebar */}
         <aside 
-          className={`absolute top-0 left-0 h-full w-full max-w-[300px] bg-neutral-950 border-r border-white/10 p-6 flex flex-col transition-transform duration-500 ease-out ${
+          className={`absolute top-0 left-0 h-full w-full max-w-75 bg-neutral-950 border-r border-white/10 p-6 flex flex-col transition-transform duration-500 ease-out ${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
           <div className="flex justify-between items-center mb-10">
             <div className="flex flex-col">
               <span className="text-xs font-black text-red-600 uppercase tracking-widest">SaaS Menu</span>
-              <span className="text-[10px] text-white/30 uppercase">Tienda de Tiendas</span>
+              <span className="text-[10px] text-white/30 uppercase font-bold">Tienda de Tiendas</span>
             </div>
             <button onClick={() => setIsSidebarOpen(false)} className="text-white/50 hover:text-white">
               <X size={24} />
@@ -154,8 +163,8 @@ export default function Header() {
           <nav className="flex flex-col gap-2">
             {sideNavItems.map((item) => (
               <Link
-                key={item.href}
-                href={item.href}
+                key={item.label}
+                href={getHref(item.href)}
                 onClick={() => setIsSidebarOpen(false)}
                 className="group flex items-center justify-between p-4 rounded-xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10"
               >
@@ -173,9 +182,12 @@ export default function Header() {
           </nav>
 
           <div className="mt-auto pt-6 border-t border-white/5">
-            <p className="text-[9px] text-white/20 uppercase tracking-widest text-center">
-              Version 2.0 - High Performance
-            </p>
+            <div className="bg-red-600/5 border border-red-600/10 p-4 rounded-xl">
+              <p className="text-[10px] font-black text-red-600 uppercase mb-1">Status</p>
+              <p className="text-[9px] text-white/40 uppercase tracking-widest">
+                Version 2.0 — High Performance
+              </p>
+            </div>
           </div>
         </aside>
       </div>

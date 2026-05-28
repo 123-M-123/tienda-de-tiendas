@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* RESET BASE */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background-color: #e6dcb7;
+  color: #000;
+}
+
+/* INPUTS */
+input {
+  width: 100%;
+  border: 1px solid #ccc;
+  padding: 14px;
+  border-radius: 12px;
+}

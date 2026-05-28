@@ -1,4 +1,5 @@
-// app/layout.tsx - REEMPLAZO COMPLETO Y FUSIONADO
+// app/layout.tsx
+
 import type { Metadata } from "next"
 import Script from "next/script"
 import { GeistSans } from "geist/font/sans"
@@ -8,18 +9,18 @@ import "./globals.css"
 
 import Header from "@/app/components/Header"
 import Footer from "@/app/components/Footer"
-import DynamicStyles from "@/app/components/DynamicStyles"
 
 const GA_ID = "G-SMRT3RGFJD"
 
-// NOTA: Esta metadata es la estática inicial. 
-// Para el SaaS usaremos generateMetadata más adelante para que sea 100% dinámica por cliente.
 export const metadata: Metadata = {
   title: "Tienda de Tiendas — Tu tienda online lista para vender",
-  description: "Creamos tiendas online simples, rápidas y sin comisiones mensuales ni dependencia de plataformas.",
+  description:
+    "Creamos tiendas online simples, rápidas y sin comisiones mensuales ni dependencia de plataformas.",
 
   metadataBase: new URL("https://tienda-de-tiendas.vercel.app"),
+
   manifest: "/manifest.json",
+
   themeColor: "#000000",
 
   icons: {
@@ -29,12 +30,13 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Tienda de Tiendas — Tu tienda online lista para vender",
-    description: "Creamos tiendas online simples, rápidas y sin comisiones mensuales.",
+    description:
+      "Creamos tiendas online simples, rápidas y sin comisiones mensuales.",
     url: "https://tienda-de-tiendas.vercel.app",
     siteName: "Tienda de Tiendas",
     images: [
       {
-        url: "/preview.jpg", // Aquí es donde usaremos la variable después
+        url: "/preview.jpg",
         width: 1200,
         height: 630,
         alt: "Tienda de Tiendas Preview",
@@ -47,7 +49,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Tienda de Tiendas — Tu tienda online lista para vender",
-    description: "Creamos tiendas online simples, rápidas y sin comisiones mensuales.",
+    description:
+      "Creamos tiendas online simples, rápidas y sin comisiones mensuales.",
     images: ["/preview.jpg"],
   },
 }
@@ -92,12 +95,9 @@ export default function RootLayout({
         </Script>
       </head>
 
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        {/* Motor de estilos dinámicos (Colores) */}
-        <DynamicStyles />
-        
+      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Header />
-        <main>{children}</main>
+        {children}
         <Footer />
         <Analytics />
       </body>

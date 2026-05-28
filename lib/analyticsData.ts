@@ -1,8 +1,7 @@
-// lib/analyticsData.ts
 import { auth } from "@/auth";
-import { getGoogleAccessToken } from "./googleAuth";
 import { ADMIN_EMAIL, CLIENTES } from "./clientes";
 import { getAnalyticsAccessToken } from "./googleAuth";
+
 export async function getAnalyticsData(targetEmail?: string) {
   const session = await auth();
   const userEmail = session?.user?.email?.trim().toLowerCase();
@@ -10,19 +9,22 @@ export async function getAnalyticsData(targetEmail?: string) {
 
   const isAdmin = userEmail === ADMIN_EMAIL.trim().toLowerCase();
   
-  // 1. Buscamos el ID de Propiedad de GA4
-  // Si es admin y no eligió a nadie, usamos un ID por defecto (el tuyo)
-  // Si eligió a alguien o es un cliente, usamos el gaId del diccionario CLIENTES
+  // LOGICA DE PROPIEDAD ROBUSTA
   let propertyId = "534648857"; // Tu ID de Admin por defecto
 
-  const emailABuscar = (isAdmin && targetEmail) ? targetEmail.trim().toLowerCase() : userEmail;
+  // Limpiamos el email que viene por parámetro (vendedor)
+  const emailABuscar = (isAdmin && targetEmail) 
+    ? decodeURIComponent(targetEmail).trim().toLowerCase() 
+    : userEmail;
   
   if (CLIENTES[emailABuscar]) {
     propertyId = CLIENTES[emailABuscar].gaId;
+    console.log(`Cargando métricas para: ${emailABuscar} (GA: ${propertyId})`);
+  } else {
+    console.warn(`Email no encontrado en diccionario, usando default: ${emailABuscar}`);
   }
 
   try {
-    // 2. Obtenemos el token (Ahora viene de la Service Account vía googleAuth.ts)
     const token = await getAnalyticsAccessToken();
     const url = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
 
@@ -50,12 +52,7 @@ export async function getAnalyticsData(targetEmail?: string) {
       cache: 'no-store'
     });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.error("Error de Google Analytics API:", errorData);
-      return { rows: [] };
-    }
-
+    if (!res.ok) return { rows: [] };
     return await res.json();
   } catch (error) {
     console.error("Error GA4 API:", error);

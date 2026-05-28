@@ -61,8 +61,8 @@ export default function HeroSection() {
         </div>
 
         {/* DERECHA: CARRUSEL VERTICAL (PARA FOLLETOS) */}
-        <div className="relative group order-1 lg:order-2 w-full max-w-[450px] mx-auto">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-red-900/40 bg-neutral-900">
+        <div className="relative group order-1 lg:order-2 w-full max-w-112.5x-auto">
+          <div className="relative aspect-4/5 overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-red-900/40 bg-neutral-900">
             {images.map((img, index) => (
               <div
                 key={index}
@@ -71,7 +71,7 @@ export default function HeroSection() {
                 }`}
               >
                 <img src={img} alt={`Trabajo ${index + 1}`} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent"></div>
               </div>
             ))}
             <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity border border-white/10 hover:bg-red-600">

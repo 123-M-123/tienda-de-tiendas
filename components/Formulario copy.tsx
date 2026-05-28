@@ -183,7 +183,7 @@ ${form.estructura.join(", ")}
   };
 
   return (
-    <section id="contacto" className="scroll-mt-[90px] px-4">
+    <section id="contacto" className="scroll-mt-22.5 px-4">
       <div style={container}>
         <h2 style={title}>Empezar mi tienda</h2>
         <p style={subtitle}>Solo para gente que quiere vender en serio</p>
