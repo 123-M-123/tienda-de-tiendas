@@ -1,153 +1,181 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, ChevronRight, LayoutGrid, Globe, Zap, Users } from 'lucide-react'
+import { 
+  Menu, X, ChevronDown, ChevronUp, 
+  BookOpen, LayoutDashboard, Settings, 
+  MessageSquare, ChevronRight 
+} from 'lucide-react'
 
+// Fila 2 (Oculta en el Header)
 const hiddenRow = [
-  { href: '/beneficios', label: 'Beneficios', icon: <Zap size={16} /> },
-  { href: '/como-funciona', label: 'Cómo funciona', icon: <LayoutGrid size={16} /> },
-  { href: '/clientes', label: 'Clientes', icon: <Users size={16} /> },
-  { href: '/compara', label: 'Compará', icon: <Globe size={16} /> },
+  { href: '/beneficios', label: 'Beneficios' },
+  { href: '/como-funciona', label: 'Cómo funciona' },
+  { href: '/clientes', label: 'Clientes' },
+  { href: '/compara', label: 'Compará' },
 ]
 
+// Fila 1 (Visible en el Header)
 const mainRow = [
   { href: '/', label: 'Inicio' },
   { href: '/panel', label: 'Panel Cliente' },
+  { href: '/#contacto', label: 'Empezar' },
+]
+
+// Navegador Lateral (Sidebar - Lo nuevo)
+const sideNavItems = [
+  { href: '/docs', label: 'Documentación', icon: <BookOpen size={18} /> },
+  { href: '/panel/dashboard', label: 'Panel de Control', icon: <LayoutDashboard size={18} /> },
+  { href: '/ajustes', label: 'Configuración SaaS', icon: <Settings size={18} /> },
+  { href: 'https://wa.me/5491153778475', label: 'Soporte Técnico', icon: <MessageSquare size={18} /> },
 ]
 
 export default function Header() {
   const pathname = usePathname()
-  const [isSideNavOpen, setIsSideNavOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const [isRow2Open, setIsRow2Open] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  // Efecto de scroll para el header
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  const isActive = (href: string) => {
+    if (href === '/#contacto') return false
+    return pathname === href
+  }
 
   return (
     <>
-      {/* 1. TOP HEADER BAR */}
-      <header 
-        className={`sticky top-0 z-[60] transition-all duration-300 ${
-          scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/10 py-3' : 'bg-black py-5'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          
-          {/* LADO IZQUIERDO: LOGO + MENU TRIGGER */}
-          <div className="flex items-center gap-8">
-            <button 
-              onClick={() => setIsSideNavOpen(true)}
-              className="p-2 hover:bg-white/5 rounded-lg transition-colors text-white group"
-            >
-              <Menu size={24} className="group-hover:text-red-600 transition-colors" />
-            </button>
-            
-            <Link href="/" className="transition-transform hover:scale-105">
-              <Image
-                src="/logo-nuevo.png"
-                alt="Tienda de Tiendas"
-                width={200}
-                height={50}
-                priority
-                className="w-auto h-8 md:h-10 object-contain"
-              />
-            </Link>
-          </div>
+      {/* --- HEADER PRINCIPAL --- */}
+      <header className="sticky top-0 z-[60] bg-black border-b border-white/10 shadow-2xl">
+        
+        {/* BOTÓN HAMBURGUESA (IZQUIERDA) - Dispara Sidebar */}
+        <button 
+          onClick={() => setIsSidebarOpen(true)}
+          className="absolute left-4 top-6 p-2 text-white/70 hover:text-red-600 transition-colors"
+        >
+          <Menu size={24} />
+        </button>
 
-          {/* LADO DERECHO: NAV PRINCIPAL + CTA */}
-          <div className="flex items-center gap-6">
-            <nav className="hidden md:flex items-center gap-6">
+        {/* LOGO CENTRAL: logo-nuevo.png */}
+        <div className="max-w-5xl mx-auto px-4 py-4 flex justify-center">
+          <Link href="/">
+            <Image
+              src="/logo-nuevo.png"
+              alt="Tienda de Tiendas"
+              width={280}
+              height={70}
+              priority
+              className="w-auto h-10 md:h-12 object-contain"
+            />
+          </Link>
+        </div>
+
+        <div className="border-t border-white/5 bg-neutral-950">
+          {/* FILA 1: NAVEGACIÓN */}
+          <div className="max-w-3xl mx-auto px-3 py-2 relative flex items-center justify-center">
+            <nav className="flex justify-center gap-1">
               {mainRow.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-xs font-black uppercase tracking-widest transition-colors ${
-                    pathname === item.href ? 'text-red-600' : 'text-white/60 hover:text-white'
-                  }`}
+                  className={`
+                    px-4 py-2 min-w-[75px] rounded-full text-center transition-all text-[11px] md:text-xs font-bold uppercase tracking-tight
+                    ${isActive(item.href)
+                      ? 'bg-red-600 text-white'
+                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                    }
+                    ${item.label === 'Empezar' ? 'border border-red-600 text-red-600 hover:bg-red-600 hover:text-white ml-2' : ''}
+                  `}
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
-            
-            <Link 
-              href="/#contacto" 
-              className="bg-red-600 hover:bg-white hover:text-black text-white px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-tighter transition-all shadow-lg shadow-red-600/20"
+
+            {/* BOTÓN TOGGLE FILA 2 */}
+            <button
+              onClick={() => setIsRow2Open(!isRow2Open)}
+              className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-white/50 hover:text-red-600 transition-colors"
             >
-              Empezar
-            </Link>
+              {isRow2Open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+          </div>
+
+          {/* FILA 2: GLASSMORPHISM */}
+          <div
+            className={`
+              overflow-hidden transition-all duration-500 ease-in-out
+              ${isRow2Open ? 'max-h-40 bg-white/5 backdrop-blur-xl border-t border-white/5' : 'max-h-0'}
+            `}
+          >
+            <nav className="max-w-3xl mx-auto px-3 py-4 flex justify-center gap-4 flex-wrap">
+              {hiddenRow.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-[10px] font-black uppercase tracking-[0.15em] text-white/40 hover:text-red-600 transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
           </div>
         </div>
       </header>
 
-      {/* 2. SIDE NAVIGATION (SIDEBAR) CON DESENFOQUE */}
+      {/* --- SIDEBAR LATERAL (NUEVO NAVEGADOR) --- */}
       <div 
         className={`fixed inset-0 z-[70] transition-all duration-500 ${
-          isSideNavOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
-        {/* Overlay oscuro */}
+        {/* Overlay con desenfoque */}
         <div 
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={() => setIsSideNavOpen(false)}
+          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          onClick={() => setIsSidebarOpen(false)}
         />
 
-        {/* Panel Lateral */}
+        {/* Panel Sidebar */}
         <aside 
-          className={`absolute top-0 left-0 h-full w-full max-w-[320px] bg-black/90 backdrop-blur-xl border-r border-white/10 p-8 flex flex-col transition-transform duration-500 ease-out ${
-            isSideNavOpen ? 'translate-x-0' : '-translate-x-full'
+          className={`absolute top-0 left-0 h-full w-full max-w-[300px] bg-neutral-950 border-r border-white/10 p-6 flex flex-col transition-transform duration-500 ease-out ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="flex justify-between items-center mb-12">
-            <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.3em]">Navegación</span>
-            <button 
-              onClick={() => setIsSideNavOpen(false)}
-              className="p-2 text-white/50 hover:text-white"
-            >
+          <div className="flex justify-between items-center mb-10">
+            <div className="flex flex-col">
+              <span className="text-xs font-black text-red-600 uppercase tracking-widest">SaaS Menu</span>
+              <span className="text-[10px] text-white/30 uppercase">Tienda de Tiendas</span>
+            </div>
+            <button onClick={() => setIsSidebarOpen(false)} className="text-white/50 hover:text-white">
               <X size={24} />
             </button>
           </div>
 
           <nav className="flex flex-col gap-2">
-            {/* Secciones de Exploración */}
-            {hiddenRow.map((item) => (
+            {sideNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setIsSideNavOpen(false)}
+                onClick={() => setIsSidebarOpen(false)}
                 className="group flex items-center justify-between p-4 rounded-xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10"
               >
                 <div className="flex items-center gap-4">
                   <div className="text-red-600 group-hover:scale-110 transition-transform">
                     {item.icon}
                   </div>
-                  <span className="text-sm font-bold text-white/80 group-hover:text-white uppercase tracking-tight">
+                  <span className="text-xs font-bold text-white/80 group-hover:text-white uppercase">
                     {item.label}
                   </span>
                 </div>
-                <ChevronRight size={16} className="text-white/20 group-hover:text-red-600 transition-colors" />
+                <ChevronRight size={14} className="text-white/10 group-hover:text-red-600 transition-all" />
               </Link>
             ))}
           </nav>
 
-          <div className="mt-auto pt-8 border-t border-white/5">
-            <div className="bg-red-600/10 border border-red-600/20 p-6 rounded-2xl">
-              <p className="text-[10px] font-black text-red-600 uppercase mb-2">Soporte VIP</p>
-              <p className="text-xs text-white/70 leading-relaxed mb-4">¿Necesitás ayuda con tu despliegue SaaS?</p>
-              <Link 
-                href="https://wa.me/5491153778475" 
-                className="text-xs font-bold text-white hover:text-red-600 transition-colors"
-              >
-                Hablar con un experto →
-              </Link>
-            </div>
+          <div className="mt-auto pt-6 border-t border-white/5">
+            <p className="text-[9px] text-white/20 uppercase tracking-widest text-center">
+              Version 2.0 - High Performance
+            </p>
           </div>
         </aside>
       </div>

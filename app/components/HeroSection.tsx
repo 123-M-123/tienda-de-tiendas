@@ -8,9 +8,9 @@ import {
 
 const images = [
   "/Folleto-1.jpg",
-  "/folleto-2.jpg",
+  "/Folleto-2.jpg",
   "/Folleto-1.jpg", 
-  "/folleto-2.jpg",
+  "/Folleto-2.jpg",
   "/Folleto-1.jpg",
 ]
 
