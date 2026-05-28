@@ -1,97 +1,156 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Menu, X, ChevronRight, LayoutGrid, Globe, Zap, Users } from 'lucide-react'
 
 const hiddenRow = [
-  { href: '/beneficios', label: 'Beneficios' },
-  { href: '/como-funciona', label: 'Cómo funciona' },
-  { href: '/clientes', label: 'Clientes' },
-  { href: '/compara', label: 'Compará' },
+  { href: '/beneficios', label: 'Beneficios', icon: <Zap size={16} /> },
+  { href: '/como-funciona', label: 'Cómo funciona', icon: <LayoutGrid size={16} /> },
+  { href: '/clientes', label: 'Clientes', icon: <Users size={16} /> },
+  { href: '/compara', label: 'Compará', icon: <Globe size={16} /> },
 ]
 
 const mainRow = [
   { href: '/', label: 'Inicio' },
   { href: '/panel', label: 'Panel Cliente' },
-  { href: '/#contacto', label: 'Empezar' },
 ]
 
 export default function Header() {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const [isSideNavOpen, setIsSideNavOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
-  const isActive = (href: string) => {
-    if (href === '/#contacto') return pathname === '/'
-    return pathname === href
-  }
-
-  const renderButton = (item: any) => (
-    <Link
-      key={item.href}
-      href={item.href}
-      className={`
-        px-2 py-2 min-w-20 rounded-md text-center leading-tight transition text-xs md:text-sm
-        ${isActive(item.href)
-          ? 'font-bold border-b-2 border-black'
-          : 'opacity-70 hover:opacity-100'
-        }
-      `}
-    >
-      {item.label === 'Cómo funciona'
-        ? <>Cómo<br />funciona</>
-        : item.label}
-    </Link>
-  )
+  // Efecto de scroll para el header
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
-    <header className="sticky top-0 z-50 bg-[#e7e1ccd0] shadow-md">
+    <>
+      {/* 1. TOP HEADER BAR */}
+      <header 
+        className={`sticky top-0 z-[60] transition-all duration-300 ${
+          scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/10 py-3' : 'bg-black py-5'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          
+          {/* LADO IZQUIERDO: LOGO + MENU TRIGGER */}
+          <div className="flex items-center gap-8">
+            <button 
+              onClick={() => setIsSideNavOpen(true)}
+              className="p-2 hover:bg-white/5 rounded-lg transition-colors text-white group"
+            >
+              <Menu size={24} className="group-hover:text-red-600 transition-colors" />
+            </button>
+            
+            <Link href="/" className="transition-transform hover:scale-105">
+              <Image
+                src="/logo-nuevo.png"
+                alt="Tienda de Tiendas"
+                width={200}
+                height={50}
+                priority
+                className="w-auto h-8 md:h-10 object-contain"
+              />
+            </Link>
+          </div>
 
-      {/* LOGO */}
-      <div className="max-w-3xl mx-auto px-4 py-4 flex justify-center">
-        <Link href="/">
-          <Image
-            src="/logo.png"
-            alt="Tienda de Tiendas"
-            width={500}
-            height={150}
-            priority
-            className="w-full max-w-80 md:max-w-80 h-auto object-contain"
-          />
-        </Link>
-      </div>
-
-      <div className="border-t">
-
-        {/* FILA PRINCIPAL */}
-        <div className="max-w-3xl mx-auto px-3 pt-2 pb-2 relative">
-
-          <button
-            onClick={() => setOpen(!open)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-2 font-bold text-sm"
-          >
-            {open ? '−' : '+'}
-          </button>
-
-          <nav className="flex justify-center gap-1 pr-8">
-            {mainRow.map(renderButton)}
-          </nav>
+          {/* LADO DERECHO: NAV PRINCIPAL + CTA */}
+          <div className="flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6">
+              {mainRow.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-xs font-black uppercase tracking-widest transition-colors ${
+                    pathname === item.href ? 'text-red-600' : 'text-white/60 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            
+            <Link 
+              href="/#contacto" 
+              className="bg-red-600 hover:bg-white hover:text-black text-white px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-tighter transition-all shadow-lg shadow-red-600/20"
+            >
+              Empezar
+            </Link>
+          </div>
         </div>
+      </header>
 
-        {/* FILA OCULTA */}
-        <div
-          className={`
-            overflow-hidden transition-all duration-300
-            ${open ? 'max-h-40 pb-2' : 'max-h-0'}
-          `}
+      {/* 2. SIDE NAVIGATION (SIDEBAR) CON DESENFOQUE */}
+      <div 
+        className={`fixed inset-0 z-[70] transition-all duration-500 ${
+          isSideNavOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Overlay oscuro */}
+        <div 
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsSideNavOpen(false)}
+        />
+
+        {/* Panel Lateral */}
+        <aside 
+          className={`absolute top-0 left-0 h-full w-full max-w-[320px] bg-black/90 backdrop-blur-xl border-r border-white/10 p-8 flex flex-col transition-transform duration-500 ease-out ${
+            isSideNavOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
         >
-          <nav className="max-w-3xl mx-auto px-3 flex justify-center gap-1 flex-wrap">
-            {hiddenRow.map(renderButton)}
-          </nav>
-        </div>
+          <div className="flex justify-between items-center mb-12">
+            <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.3em]">Navegación</span>
+            <button 
+              onClick={() => setIsSideNavOpen(false)}
+              className="p-2 text-white/50 hover:text-white"
+            >
+              <X size={24} />
+            </button>
+          </div>
 
+          <nav className="flex flex-col gap-2">
+            {/* Secciones de Exploración */}
+            {hiddenRow.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsSideNavOpen(false)}
+                className="group flex items-center justify-between p-4 rounded-xl hover:bg-white/5 transition-all border border-transparent hover:border-white/10"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="text-red-600 group-hover:scale-110 transition-transform">
+                    {item.icon}
+                  </div>
+                  <span className="text-sm font-bold text-white/80 group-hover:text-white uppercase tracking-tight">
+                    {item.label}
+                  </span>
+                </div>
+                <ChevronRight size={16} className="text-white/20 group-hover:text-red-600 transition-colors" />
+              </Link>
+            ))}
+          </nav>
+
+          <div className="mt-auto pt-8 border-t border-white/5">
+            <div className="bg-red-600/10 border border-red-600/20 p-6 rounded-2xl">
+              <p className="text-[10px] font-black text-red-600 uppercase mb-2">Soporte VIP</p>
+              <p className="text-xs text-white/70 leading-relaxed mb-4">¿Necesitás ayuda con tu despliegue SaaS?</p>
+              <Link 
+                href="https://wa.me/5491153778475" 
+                className="text-xs font-bold text-white hover:text-red-600 transition-colors"
+              >
+                Hablar con un experto →
+              </Link>
+            </div>
+          </div>
+        </aside>
       </div>
-    </header>
+    </>
   )
 }
