@@ -7,10 +7,18 @@ import {
 } from "lucide-react";
 import NavLink from "./NavLink";
 
-export default async function PanelLayout({ children }: { children: React.ReactNode }) {
+export default async function PanelLayout({ 
+  children,
+  searchParams 
+}: { 
+  children: React.ReactNode,
+  searchParams: { vendedor?: string } 
+}) {
   const session = await auth();
   const userEmail = session?.user?.email || "";
   const isAdmin = userEmail.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase();
+  
+  const vendedorSeleccionado = searchParams?.vendedor?.trim().toLowerCase();
 
   const [emailUser, emailDomain] = userEmail.includes('@') 
     ? userEmail.split('@') 
@@ -49,17 +57,31 @@ export default async function PanelLayout({ children }: { children: React.ReactN
         </div>
       </header>
 
-      {/* 2. SELECTOR ADMIN */}
+      {/* 2. SELECTOR ADMIN (PINTADO EN SLATE) */}
       {isAdmin && (
         <div className="bg-white/80 backdrop-blur-sm border-b border-slate-300 px-4 py-2 overflow-x-auto no-scrollbar shadow-sm">
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 w-fit mx-auto md:mx-0">
-            <NextLink href="/panel/dashboard" className="px-3 py-1.5 text-[9px] font-black uppercase rounded-lg hover:bg-white transition-all">Global</NextLink>
-            {Array.from(new Set(Object.values(CLIENTES).map(c => c.gaId))).map(gaId => {
-              const cliente = Object.values(CLIENTES).find(c => c.gaId === gaId);
-              const emailAsociado = Object.keys(CLIENTES).find(key => CLIENTES[key].gaId === gaId);
+            <NextLink 
+              href="/panel/dashboard" 
+              className={`px-3 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all ${!vendedorSeleccionado ? 'bg-slate-900 text-white shadow-md' : 'hover:bg-white text-slate-600'}`}
+            >
+              Global
+            </NextLink>
+            {Object.keys(CLIENTES).map(email => {
+              const cliente = CLIENTES[email];
+              const isSelected = email.trim().toLowerCase() === vendedorSeleccionado;
+              
               return (
-                <NextLink key={gaId} href={`?vendedor=${emailAsociado}`} className="px-3 py-1.5 whitespace-nowrap text-[9px] font-black uppercase rounded-lg bg-white shadow-sm border border-slate-100 hover:text-blue-600 transition-all">
-                  {cliente?.nombre}
+                <NextLink 
+                  key={email} 
+                  href={`/panel/dashboard?vendedor=${email}`} 
+                  className={`px-3 py-1.5 whitespace-nowrap text-[9px] font-black uppercase rounded-lg border transition-all ${
+                    isSelected 
+                      ? 'bg-slate-900 text-white border-slate-950 shadow-md' 
+                      : 'bg-white text-slate-600 border-slate-100 hover:text-blue-600'
+                  }`}
+                >
+                  {cliente.nombre}
                 </NextLink>
               );
             })}
@@ -68,57 +90,17 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       )}
 
       <div className="flex flex-col flex-1">
-        
-        {/* 3. NAVEGACIÓN COMPACTA (Ahora con 6 botones) */}
         <aside className="w-full bg-white/50 border-b border-slate-200 p-2 md:p-4 overflow-x-auto no-scrollbar">
           <nav className="flex flex-row gap-2 md:gap-4 justify-start md:justify-center">
-            <NavLink 
-              href="/panel/dashboard" 
-              label="PANTALLA" 
-              subLabel="RESUMEN" 
-              subColor="text-slate-900" 
-              icon={<LayoutDashboard size={18} />} 
-            />
-            <NavLink 
-              href="/panel/analytics" 
-              label="MÉTRICAS" 
-              subLabel="GOOGLE" 
-              subColor="text-slate-400" 
-              icon={<BarChart3 size={18} />} 
-            />
-            <NavLink 
-              href="/panel/pedidos" 
-              label="PEDIDOS" 
-              subLabel="OFF-LINE" 
-              subColor="text-emerald-600" 
-              icon={<ClipboardList size={18} />} 
-            />
-            <NavLink 
-              href="/panel/webhook" 
-              label="PAGOS" 
-              subLabel="ON-LINE" 
-              subColor="text-blue-600" 
-              icon={<CreditCard size={18} />} 
-            />
-            <NavLink 
-              href="/panel/productos" 
-              label="PRODUCTOS" 
-              subLabel="GESTIÓN" 
-              subColor="text-orange-600" 
-              icon={<Package size={18} />} 
-            />
-            {/* NUEVO BOTÓN: PUBLICIDAD / BANNERS */}
-            <NavLink 
-              href="/panel/banners" 
-              label="PUBLICIDAD" 
-              subLabel="BANNERS" 
-              subColor="text-purple-600" 
-              icon={<Image size={18} />} 
-            />
+            <NavLink href="/panel/dashboard" label="PANTALLA" subLabel="RESUMEN" subColor="text-slate-900" icon={<LayoutDashboard size={18} />} />
+            <NavLink href="/panel/analytics" label="MÉTRICAS" subLabel="GOOGLE" subColor="text-slate-400" icon={<BarChart3 size={18} />} />
+            <NavLink href="/panel/pedidos" label="PEDIDOS" subLabel="OFF-LINE" subColor="text-emerald-600" icon={<ClipboardList size={18} />} />
+            <NavLink href="/panel/webhook" label="PAGOS" subLabel="ON-LINE" subColor="text-blue-600" icon={<CreditCard size={18} />} />
+            <NavLink href="/panel/productos" label="PRODUCTOS" subLabel="GESTIÓN" subColor="text-orange-600" icon={<Package size={18} />} />
+            <NavLink href="/panel/banners" label="PUBLICIDAD" subLabel="BANNERS" subColor="text-purple-600" icon={<Image size={18} />} />
           </nav>
         </aside>
 
-        {/* 4. CONTENIDO BEIGE */}
         <main className="flex-1 p-4 md:p-10 min-w-0">
           <div className="max-w-7xl mx-auto">
             {children}

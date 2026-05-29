@@ -3,7 +3,7 @@ import { getPanelData } from "@/lib/panelData";
 import { getAnalyticsData } from "@/lib/analyticsData";
 import { BarChart3, ShoppingBag, Wallet, Box } from "lucide-react";
 import Link from "next/link";
-import Customizer from "@/app/panel/dashboard/Customizer";
+import Customizer from "./Customizer";
 
 export default async function DashboardPage({ searchParams }: { searchParams: { vendedor?: string } }) {
   const session = await auth();
