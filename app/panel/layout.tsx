@@ -3,7 +3,7 @@ import NextLink from "next/link";
 import { ADMIN_EMAIL, CLIENTES } from "@/lib/clientes";
 import { 
   LayoutDashboard, ClipboardList, CreditCard, 
-  Package, Store, BarChart3, LogOut, Image 
+  Package, Store, BarChart3, LogOut, Image, Settings 
 } from "lucide-react";
 import NavLink from "./NavLink";
 
@@ -20,9 +20,12 @@ export default async function PanelLayout({
   
   const vendedorSeleccionado = searchParams?.vendedor?.trim().toLowerCase();
 
-  const [emailUser, emailDomain] = userEmail.includes('@') 
-    ? userEmail.split('@') 
-    : ["Usuario", ""];
+  // 🛡️ LÓGICA DE SET RESTAURADA: Evita duplicados (Tecno EG sale una sola vez)
+  const clientesUnicos = Array.from(
+    new Map(Object.entries(CLIENTES).map(([email, info]) => [info.gaId, { ...info, email }])).values()
+  );
+
+  const [emailUser, emailDomain] = userEmail.includes('@') ? userEmail.split('@') : ["Usuario", ""];
 
   return (
     <div className="min-h-screen bg-[#e6dcb7] flex flex-col text-[#1A1A1A] font-sans">
@@ -57,7 +60,7 @@ export default async function PanelLayout({
         </div>
       </header>
 
-      {/* 2. SELECTOR ADMIN (PINTADO EN SLATE) */}
+      {/* 2. SELECTOR ADMIN (SIN DUPLICADOS Y PINTADO) */}
       {isAdmin && (
         <div className="bg-white/80 backdrop-blur-sm border-b border-slate-300 px-4 py-2 overflow-x-auto no-scrollbar shadow-sm">
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 w-fit mx-auto md:mx-0">
@@ -67,17 +70,15 @@ export default async function PanelLayout({
             >
               Global
             </NextLink>
-            {Object.keys(CLIENTES).map(email => {
-              const cliente = CLIENTES[email];
-              const isSelected = email.trim().toLowerCase() === vendedorSeleccionado;
-              
+            {clientesUnicos.map(cliente => {
+              const isSelected = cliente.email.trim().toLowerCase() === vendedorSeleccionado;
               return (
                 <NextLink 
-                  key={email} 
-                  href={`/panel/dashboard?vendedor=${email}`} 
+                  key={cliente.gaId} 
+                  href={`/panel/dashboard?vendedor=${cliente.email}`} 
                   className={`px-3 py-1.5 whitespace-nowrap text-[9px] font-black uppercase rounded-lg border transition-all ${
                     isSelected 
-                      ? 'bg-slate-900 text-white border-slate-950 shadow-md' 
+                      ? 'bg-slate-900 text-white border-slate-950 shadow-md scale-105' 
                       : 'bg-white text-slate-600 border-slate-100 hover:text-blue-600'
                   }`}
                 >
@@ -97,7 +98,8 @@ export default async function PanelLayout({
             <NavLink href="/panel/pedidos" label="PEDIDOS" subLabel="OFF-LINE" subColor="text-emerald-600" icon={<ClipboardList size={18} />} />
             <NavLink href="/panel/webhook" label="PAGOS" subLabel="ON-LINE" subColor="text-blue-600" icon={<CreditCard size={18} />} />
             <NavLink href="/panel/productos" label="PRODUCTOS" subLabel="GESTIÓN" subColor="text-orange-600" icon={<Package size={18} />} />
-            <NavLink href="/panel/banners" label="PUBLICIDAD" subLabel="BANNERS" subColor="text-purple-600" icon={<Image size={18} />} />
+            {/* NUEVO BOTÓN DE AJUSTES */}
+            <NavLink href="/panel/ajustes" label="BRANDING" subLabel="ESTILOS" subColor="text-red-600" icon={<Settings size={18} />} />
           </nav>
         </aside>
 
