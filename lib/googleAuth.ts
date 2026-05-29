@@ -1,7 +1,6 @@
-// lib/googleAuth.ts
+// lib/googleAuth.ts - REEMPLAZO COMPLETO
 import { GoogleAuth, OAuth2Client } from 'google-auth-library';
 
-// Para Sheets y Drive - sigue usando Service Account (no tocar)
 export async function getGoogleAccessToken() {
   try {
     const auth = new GoogleAuth({
@@ -12,24 +11,22 @@ export async function getGoogleAccessToken() {
       scopes: [
         'https://www.googleapis.com/auth/spreadsheets',
         'https://www.googleapis.com/auth/drive.readonly',
+        'https://www.googleapis.com/auth/content', // 🚩 SCOPE PARA MERCHANT CENTER
       ],
     });
 
     const client = await auth.getClient();
     const tokenResponse = await client.getAccessToken();
 
-    if (!tokenResponse.token) {
-      throw new Error("No se pudo generar el token de acceso");
-    }
-
+    if (!tokenResponse.token) throw new Error("No se pudo generar el token");
     return tokenResponse.token;
   } catch (error) {
-    console.error("Error en getGoogleAccessToken (Service Account):", error);
+    console.error("Error en getGoogleAccessToken:", error);
     throw error;
   }
 }
 
-// Para Analytics - usa OAuth con refresh token permanente
+// Mantener getAnalyticsAccessToken igual...
 export async function getAnalyticsAccessToken() {
   try {
     const oauth2Client = new OAuth2Client(
@@ -37,20 +34,13 @@ export async function getAnalyticsAccessToken() {
       process.env.GOOGLE_ANALYTICS_CLIENT_SECRET,
       'http://localhost:3000/callback'
     );
-
     oauth2Client.setCredentials({
       refresh_token: process.env.GOOGLE_ANALYTICS_REFRESH_TOKEN,
     });
-
     const tokenResponse = await oauth2Client.getAccessToken();
-
-    if (!tokenResponse.token) {
-      throw new Error("No se pudo generar el token de Analytics");
-    }
-
     return tokenResponse.token;
   } catch (error) {
-    console.error("Error en getAnalyticsAccessToken (OAuth):", error);
+    console.error("Error en getAnalyticsAccessToken:", error);
     throw error;
   }
 }
