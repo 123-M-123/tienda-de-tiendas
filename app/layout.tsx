@@ -1,5 +1,6 @@
-// app/layout.tsx - REEMPLAZO COMPLETO Y FUSIONADO
-import type { Metadata } from "next"
+// app/layout.tsx - REEMPLAZO COMPLETO (FIX BUILD VERCEL)
+import type { Metadata, Viewport } from "next"
+import { Suspense } from "react" // 🚩 IMPORTANTE
 import Script from "next/script"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
@@ -12,21 +13,20 @@ import DynamicStyles from "@/app/components/DynamicStyles"
 
 const GA_ID = "G-SMRT3RGFJD"
 
-// NOTA: Esta metadata es la estática inicial. 
-// Para el SaaS usaremos generateMetadata más adelante para que sea 100% dinámica por cliente.
+// 🚩 FIX: El themeColor ahora va en Viewport, no en Metadata
+export const viewport: Viewport = {
+  themeColor: "#000000",
+}
+
 export const metadata: Metadata = {
   title: "Tienda de Tiendas — Tu tienda online lista para vender",
   description: "Creamos tiendas online simples, rápidas y sin comisiones mensuales ni dependencia de plataformas.",
-
   metadataBase: new URL("https://tienda-de-tiendas.vercel.app"),
   manifest: "/manifest.json",
-  themeColor: "#000000",
-
   icons: {
     icon: "/favicon.png",
     apple: "/icon-192.png",
   },
-
   openGraph: {
     title: "Tienda de Tiendas — Tu tienda online lista para vender",
     description: "Creamos tiendas online simples, rápidas y sin comisiones mensuales.",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: "Tienda de Tiendas",
     images: [
       {
-        url: "/preview.jpg", // Aquí es donde usaremos la variable después
+        url: "/preview.jpg",
         width: 1200,
         height: 630,
         alt: "Tienda de Tiendas Preview",
@@ -43,7 +43,6 @@ export const metadata: Metadata = {
     locale: "es_AR",
     type: "website",
   },
-
   twitter: {
     card: "summary_large_image",
     title: "Tienda de Tiendas — Tu tienda online lista para vender",
@@ -60,24 +59,13 @@ export default function RootLayout({
   return (
     <html lang="es" translate="no">
       <head>
-        {/* 🔥 GOOGLE SEARCH CONSOLE */}
-        <meta
-          name="google-site-verification"
-          content="c43EWcKPaKQuTZ0w9M0U0iLPzJEgoEQmVTxKVhzfn8I"
-        />
-
-        {/* SEO base */}
-        <meta name="theme-color" content="#000000" />
-        <link rel="manifest" href="/manifest.json" />
-
-        {/* OG FIX (WhatsApp / Facebook / etc) */}
+        <meta name="google-site-verification" content="c43EWcKPaKQuTZ0w9M0U0iLPzJEgoEQmVTxKVhzfn8I" />
         <meta property="og:image" content="/preview.jpg" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Tienda de Tiendas" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
-        {/* 🔥 GOOGLE ANALYTICS */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
@@ -93,10 +81,14 @@ export default function RootLayout({
       </head>
 
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        {/* Motor de estilos dinámicos (Colores) */}
+        {/* Motor de estilos dinámicos */}
         <DynamicStyles />
         
-        <Header />
+        {/* 🚩 FIX BUILD: Header envuelto en Suspense por el uso de useSearchParams */}
+        <Suspense fallback={<div className="h-20 bg-black" />}>
+          <Header />
+        </Suspense>
+
         <main>{children}</main>
         <Footer />
         <Analytics />
