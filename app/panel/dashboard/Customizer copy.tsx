@@ -4,51 +4,57 @@ import { useState, useEffect } from "react";
 import { useConfig } from "@/hooks/useConfig";
 import { 
   Palette, 
+  ImageIcon, 
   Save, 
   RefreshCcw, 
-  Info
+  Info,
+  CheckCircle2
 } from "lucide-react";
 import { getDriveDirectLink } from "@/lib/utils";
 
 /**
  * COMPONENTE CUSTOMIZER - SECCIÓN DE BRANDING DINÁMICO
- * 🚩 FIX: Se agrega { targetVendedor } para que la página de Ajustes funcione.
+ * Este componente permite al administrador y clientes potenciales
+ * modificar la identidad visual de la tienda en tiempo real.
  */
-export default function Customizer({ targetVendedor }: { targetVendedor?: string }) {
+export default function Customizer() {
   const config = useConfig();
   const [mounted, setMounted] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // 🛡️ FIX HIDRATACIÓN: Espera al navegador para leer LocalStorage
+  // 🛡️ SOLUCIÓN AL ERROR DE HIDRATACIÓN (NEXT.JS + ZUSTAND PERSIST)
+  // Evita que el servidor intente renderizar datos que solo existen en el navegador.
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
     return (
-      <div className="w-full h-64 bg-slate-200/50 animate-pulse rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center">
-        <p className="text-slate-400 font-black uppercase tracking-tighter text-[10px]">Cargando motor de identidad...</p>
+      <div className="w-full h-64 bg-slate-200/50 animate-pulse rounded-2xl border border-dashed border-slate-300 flex items-center justify-center">
+        <p className="text-slate-400 font-bold uppercase tracking-tighter text-xs">Cargando motor de diseño...</p>
       </div>
     );
   }
 
+  // Manejador de cambios de color centralizado
   const handleColorChange = (key: 'colorPrimario' | 'colorSecundario', value: string) => {
     config.setConfig({ [key]: value });
   };
 
+  // Función para simular el guardado (Próximo paso: Conexión con Sheets)
   const handlePublish = async () => {
     setIsSaving(true);
-    // 🚩 PRÓXIMO PASO: lib/configActions.ts para guardar en Sheets
+    // Aquí irá la llamada a lib/configActions.ts
     setTimeout(() => {
       setIsSaving(false);
-      alert(`Configuración de ${targetVendedor || 'Tienda'} guardada.`);
+      alert("Configuración aplicada localmente. (Conexión a Sheets en proceso)");
     }, 1000);
   };
 
   return (
     <div className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-8 mt-6">
       
-      {/* CABECERA */}
+      {/* CABECERA DEL COMPONENTE */}
       <div className="flex items-center justify-between border-b-2 border-black/5 pb-4">
         <div className="flex items-center gap-3">
           <div className="bg-red-600 p-2 rounded-lg shadow-md">
@@ -58,8 +64,8 @@ export default function Customizer({ targetVendedor }: { targetVendedor?: string
             <h3 className="font-black uppercase text-sm tracking-tighter text-black">
               Personalización en Vivo
             </h3>
-            <p className="text-[10px] text-red-600 font-bold uppercase tracking-widest">
-              {targetVendedor || "Modo Simulador"}
+            <p className="text-[10px] text-slate-500 font-bold uppercase">
+              SaaS Identity Manager
             </p>
           </div>
         </div>
@@ -74,7 +80,7 @@ export default function Customizer({ targetVendedor }: { targetVendedor?: string
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         
-        {/* COLUMNA 1: COLORES */}
+        {/* COLUMNA IZQUIERDA: PALETA DE COLORES */}
         <div className="space-y-6">
           <div className="group">
             <label className="text-[11px] font-black uppercase text-slate-600 block mb-3 ml-1 tracking-widest">
@@ -91,14 +97,14 @@ export default function Customizer({ targetVendedor }: { targetVendedor?: string
                 type="text" 
                 value={config.colorPrimario} 
                 onChange={(e) => handleColorChange('colorPrimario', e.target.value)}
-                className="flex-1 px-5 text-sm font-mono font-bold uppercase rounded-xl border-2 border-black/10 focus:border-red-600 outline-none bg-white text-black"
+                className="flex-1 px-5 text-sm font-mono font-bold uppercase rounded-xl border-2 border-black/10 focus:border-red-600 outline-none transition-all bg-white text-black"
               />
             </div>
           </div>
 
           <div className="group">
             <label className="text-[11px] font-black uppercase text-slate-600 block mb-3 ml-1 tracking-widest">
-              Color Secundario <span className="text-slate-400">(Fondos y Acentos)</span>
+              Color Secundario <span className="text-slate-400">(Fondos y Acabados)</span>
             </label>
             <div className="flex gap-3">
               <input 
@@ -111,20 +117,20 @@ export default function Customizer({ targetVendedor }: { targetVendedor?: string
                 type="text" 
                 value={config.colorSecundario} 
                 onChange={(e) => handleColorChange('colorSecundario', e.target.value)}
-                className="flex-1 px-5 text-sm font-mono font-bold uppercase rounded-xl border-2 border-black/10 focus:border-red-600 outline-none bg-white text-black"
+                className="flex-1 px-5 text-sm font-mono font-bold uppercase rounded-xl border-2 border-black/10 focus:border-red-600 outline-none transition-all bg-white text-black"
               />
             </div>
           </div>
         </div>
 
-        {/* COLUMNA 2: LOGO Y BOTONES */}
+        {/* COLUMNA DERECHA: LOGO Y ACCIONES */}
         <div className="space-y-6">
           <div>
             <label className="text-[11px] font-black uppercase text-slate-600 block mb-3 ml-1 tracking-widest">
-              Logo de Marca <span className="text-slate-400">(Link de Drive)</span>
+              Asset de Marca <span className="text-slate-400">(URL Logo PNG)</span>
             </label>
             <div className="flex gap-3">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center border-2 border-black overflow-hidden shadow-sm shrink-0">
+              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center border-2 border-black overflow-hidden shrink-0 shadow-sm">
                 <img 
                   src={getDriveDirectLink(config.logoUrl, "200")} 
                   alt="Preview" 
@@ -137,7 +143,7 @@ export default function Customizer({ targetVendedor }: { targetVendedor?: string
                 placeholder="Pegá el link de Drive aquí..."
                 value={config.logoUrl}
                 onChange={(e) => config.setConfig({ logoUrl: e.target.value })}
-                className="flex-1 px-5 text-xs font-bold rounded-xl border-2 border-black/10 focus:border-red-600 outline-none bg-white text-black"
+                className="flex-1 px-5 text-xs font-bold rounded-xl border-2 border-black/10 focus:border-red-600 outline-none transition-all bg-white text-black"
               />
             </div>
           </div>
@@ -145,27 +151,34 @@ export default function Customizer({ targetVendedor }: { targetVendedor?: string
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button 
               onClick={() => config.resetConfig()}
-              className="flex-1 px-6 py-4 bg-slate-200 hover:bg-slate-300 text-[11px] font-black uppercase rounded-2xl transition-all text-slate-700"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-slate-200 hover:bg-slate-300 text-[11px] font-black uppercase rounded-2xl transition-all text-slate-700 border border-black/5"
             >
-              <RefreshCcw size={16} className="inline mr-2" /> Reset
+              <RefreshCcw size={16} /> Restaurar Default
             </button>
+            
             <button 
               onClick={handlePublish}
-              className="flex-1 px-6 py-4 bg-black text-white hover:bg-red-600 text-[11px] font-black uppercase rounded-2xl transition-all shadow-[4px_4px_0px_0px_rgba(220,38,38,1)] active:translate-y-1 active:shadow-none"
+              disabled={isSaving}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-black text-white hover:bg-red-600 text-[11px] font-black uppercase rounded-2xl transition-all shadow-[4px_4px_0px_0px_rgba(220,38,38,1)] active:translate-y-1 active:shadow-none disabled:opacity-50"
             >
-              <Save size={16} className="inline mr-2" /> Publicar
+              <Save size={16} /> Publicar Cambios
             </button>
           </div>
         </div>
       </div>
 
-      {/* FOOTER INFORMATIVO */}
+      {/* FOOTER DE ESTADO */}
       <div className="p-4 bg-red-600/5 border-2 border-red-600/10 rounded-2xl flex items-start gap-4">
-        <Info size={18} className="text-red-600 shrink-0 mt-1" />
+        <div className="bg-red-600 rounded-full p-1 mt-0.5">
+          <Info size={14} className="text-white" />
+        </div>
         <div className="space-y-1">
-          <p className="text-[10px] text-red-900 font-black uppercase tracking-tighter">Modo Edición Activo</p>
-          <p className="text-[9px] text-red-800/70 font-medium leading-tight uppercase">
-            Los cambios afectan a tu sesión actual. Al publicar se guardan en la base de datos maestra.
+          <p className="text-[10px] text-red-900 leading-tight font-black uppercase tracking-tighter">
+            Modo Simulador Activo
+          </p>
+          <p className="text-[9px] text-red-800/70 font-medium leading-tight">
+            Los cambios en colores y logo son visibles instantáneamente en tu sesión. 
+            Al hacer clic en <span className="font-bold">Publicar</span>, se guardarán en la Planilla Maestra para todos los usuarios.
           </p>
         </div>
       </div>
