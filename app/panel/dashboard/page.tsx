@@ -3,12 +3,13 @@ import { getPanelData } from "@/lib/panelData";
 import { getAnalyticsData } from "@/lib/analyticsData";
 import { BarChart3, ShoppingBag, Wallet, Box } from "lucide-react";
 import Link from "next/link";
-import Customizer from "./Customizer"; // Importamos el juguete nuevo
+import Customizer from "./Customizer"; // Asegurate que el archivo Customizer.tsx esté en la misma carpeta
 
 export default async function DashboardPage({ searchParams }: { searchParams: { vendedor?: string } }) {
   const session = await auth();
   const vendedorSeleccionado = searchParams.vendedor;
 
+  // Traemos los datos filtrados
   const pedidos = await getPanelData("Pedidos", vendedorSeleccionado) || [];
   const pagosMP = await getPanelData("webhoock MP", vendedorSeleccionado) || [];
   const productos = await getPanelData("Carga de productos", vendedorSeleccionado) || [];
@@ -19,33 +20,63 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
   return (
     <div className="space-y-8">
-      {/* SECCIÓN 1: CUSTOMIZER (EL CEREBRO) */}
-      <div className="space-y-3">
+      
+      {/* 1. SECCIÓN DE BRANDING (EL SELECTOR QUE BUSCÁS) */}
+      <section className="space-y-3">
         <div className="inline-flex items-center gap-3 border-b-2 border-black pb-2">
-          <h2 className="text-xl font-black uppercase tracking-tight text-black">Branding & Configuración</h2>
+          <h2 className="text-xl font-black uppercase tracking-tight text-black italic">Configuración de Estilo</h2>
         </div>
         <Customizer />
-      </div>
+      </section>
 
-      {/* SECCIÓN 2: MÉTRICAS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard title="Visitas (30 días)" value={totalVisitas.toLocaleString()} icon={<BarChart3 size={70} />} colorClass="text-slate-900/20" accentColor="text-slate-800" />
-        <MetricCard title="Pedidos Transf." value={pedidos.length} icon={<ShoppingBag size={70} />} colorClass="text-emerald-900/20" accentColor="text-emerald-700" />
-        <MetricCard title="Ventas Online" value={`$${totalMP.toLocaleString()}`} icon={<Wallet size={70} />} colorClass="text-blue-900/20" accentColor="text-blue-700" />
-        <MetricCard title="Artículos" value={productos.length} icon={<Box size={70} />} colorClass="text-orange-900/20" accentColor="text-orange-700" />
-      </div>
+      {/* 2. GRILLA DE MÉTRICAS */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard 
+          title="Visitas (30 días)" 
+          value={totalVisitas.toLocaleString()} 
+          icon={<BarChart3 size={70} />} 
+          colorClass="text-slate-900/20" 
+          accentColor="text-slate-800" 
+        />
+        <MetricCard 
+          title="Pedidos Transf." 
+          value={pedidos.length} 
+          icon={<ShoppingBag size={70} />} 
+          colorClass="text-emerald-900/20" 
+          accentColor="text-emerald-700" 
+        />
+        <MetricCard 
+          title="Ventas Online" 
+          value={`$${totalMP.toLocaleString()}`} 
+          icon={<Wallet size={70} />} 
+          colorClass="text-blue-900/20" 
+          accentColor="text-blue-700" 
+        />
+        <MetricCard 
+          title="Artículos" 
+          value={productos.length} 
+          icon={<Box size={70} />} 
+          colorClass="text-orange-900/20" 
+          accentColor="text-orange-700" 
+        />
+      </section>
 
-      {/* SECCIÓN 3: MOVIMIENTOS */}
-      <div className="rounded-xl border border-black shadow-2xl overflow-hidden">
+      {/* 3. TABLA DE MOVIMIENTOS */}
+      <section className="rounded-xl border border-black shadow-2xl overflow-hidden">
         <div className="bg-slate-900 p-4 px-6 flex justify-between items-center">
           <h3 className="text-xs font-bold text-white uppercase tracking-widest">Movimientos Recientes</h3>
-          <Link href="/panel/webhook" className="text-[10px] font-black text-blue-400 hover:text-white uppercase">VER TODO</Link>
+          <Link 
+            href="/panel/webhook" 
+            className="text-[10px] font-black text-blue-400 hover:text-white uppercase"
+          >
+            VER TODO
+          </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <tbody className="divide-y divide-black/10 bg-[#faf7ed]">
               {pagosMP.slice(0, 5).map((p, i) => (
-                <tr key={i} className="hover:bg-transparent">
+                <tr key={i} className="hover:bg-black/5 transition-colors">
                   <td className="px-8 py-4 text-[10px] text-slate-600 font-bold border-r border-black/5">{p[1]}</td>
                   <td className="px-8 py-4 text-sm font-bold text-black border-r border-black/5">{p[2]}</td>
                   <td className="px-8 py-4 text-sm font-black text-black text-right">${Number(p[3]).toLocaleString()}</td>
@@ -54,7 +85,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
