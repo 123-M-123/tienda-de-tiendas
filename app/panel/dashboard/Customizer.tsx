@@ -1,17 +1,26 @@
 "use client"
 
+import { useState, useEffect } from "react";
 import { useConfig } from "@/hooks/useConfig";
 import { Palette, ImageIcon, Save, RefreshCcw } from "lucide-react";
 
 export default function Customizer() {
   const config = useConfig();
+  const [mounted, setMounted] = useState(false);
+
+  // 🔥 FIX DE HIDRATACIÓN: Solo renderiza cuando el cliente está listo
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className="h-40 bg-slate-100 animate-pulse rounded-xl" />;
 
   const handleColorChange = (key: 'colorPrimario' | 'colorSecundario', value: string) => {
     config.setConfig({ [key]: value });
   };
 
   return (
-    <div className="bg-[#faf7ed] p-6 rounded-xl border border-black shadow-lg space-y-6 mt-4">
+    <div className="bg-[#faf7ed] p-6 rounded-xl border border-black shadow-lg space-y-6">
       <div className="flex items-center gap-2 border-b border-black/10 pb-2">
         <Palette size={20} className="text-red-600" />
         <h3 className="font-black uppercase text-xs tracking-widest text-black">Personalización en Vivo</h3>
@@ -21,7 +30,7 @@ export default function Customizer() {
         {/* BLOQUE COLORES */}
         <div className="space-y-4">
           <div>
-            <label className="text-[10px] font-black uppercase text-slate-500 block mb-2">Color Primario (Botones y Títulos)</label>
+            <label className="text-[10px] font-black uppercase text-slate-500 block mb-2">Color Primario</label>
             <div className="flex gap-2">
               <input 
                 type="color" 
@@ -39,7 +48,7 @@ export default function Customizer() {
           </div>
 
           <div>
-            <label className="text-[10px] font-black uppercase text-slate-500 block mb-2">Color Secundario (Fondos)</label>
+            <label className="text-[10px] font-black uppercase text-slate-500 block mb-2">Color Secundario</label>
             <div className="flex gap-2">
               <input 
                 type="color" 
@@ -92,8 +101,8 @@ export default function Customizer() {
       </div>
 
       <div className="p-3 bg-red-600/5 border border-red-600/10 rounded-lg">
-        <p className="text-[9px] text-red-900 leading-tight font-medium">
-          <strong>MODO SIMULADOR:</strong> Estos cambios son instantáneos en tu pantalla. Para que sean permanentes para todos, hacé clic en Publicar.
+        <p className="text-[9px] text-red-900 leading-tight font-medium uppercase italic">
+          Modo Simulador activo: Los cambios son instantáneos.
         </p>
       </div>
     </div>
