@@ -3,185 +3,189 @@
 import { useState, useEffect } from "react";
 import { useConfig } from "@/hooks/useConfig";
 import { 
-  Palette, 
-  ImageIcon, 
-  Save, 
-  RefreshCcw, 
-  Info,
-  CheckCircle2
+  Palette, Save, RefreshCcw, ShieldCheck, 
+  Share2, Wallet, Truck, LayoutGrid, Maximize2,
+  Type, MousePointer2
 } from "lucide-react";
 import { getDriveDirectLink } from "@/lib/utils";
 
-/**
- * COMPONENTE CUSTOMIZER - SECCIÓN DE BRANDING DINÁMICO
- * Este componente permite al administrador y clientes potenciales
- * modificar la identidad visual de la tienda en tiempo real.
- */
-export default function Customizer() {
+export default function Customizer({ targetVendedor }: { targetVendedor?: string }) {
   const config = useConfig();
   const [mounted, setMounted] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // 🛡️ SOLUCIÓN AL ERROR DE HIDRATACIÓN (NEXT.JS + ZUSTAND PERSIST)
-  // Evita que el servidor intente renderizar datos que solo existen en el navegador.
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
-  if (!mounted) {
-    return (
-      <div className="w-full h-64 bg-slate-200/50 animate-pulse rounded-2xl border border-dashed border-slate-300 flex items-center justify-center">
-        <p className="text-slate-400 font-bold uppercase tracking-tighter text-xs">Cargando motor de diseño...</p>
-      </div>
-    );
-  }
+  if (!mounted) return <div className="w-full h-screen bg-slate-100 animate-pulse rounded-2xl border-2 border-dashed border-slate-300" />;
 
-  // Manejador de cambios de color centralizado
-  const handleColorChange = (key: 'colorPrimario' | 'colorSecundario', value: string) => {
-    config.setConfig({ [key]: value });
-  };
-
-  // Función para simular el guardado (Próximo paso: Conexión con Sheets)
   const handlePublish = async () => {
     setIsSaving(true);
-    // Aquí irá la llamada a lib/configActions.ts
     setTimeout(() => {
       setIsSaving(false);
-      alert("Configuración aplicada localmente. (Conexión a Sheets en proceso)");
-    }, 1000);
+      alert("Configuración Maestra sincronizada localmente.");
+    }, 1500);
   };
 
   return (
-    <div className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-8 mt-6">
+    <div className="space-y-10 pb-20">
       
-      {/* CABECERA DEL COMPONENTE */}
-      <div className="flex items-center justify-between border-b-2 border-black/5 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="bg-red-600 p-2 rounded-lg shadow-md">
-            <Palette size={24} className="text-white" />
+      {/* --- SECCIÓN 1: IDENTIDAD & METADATA --- */}
+      <section className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-6">
+        <div className="flex items-center gap-3 border-b-2 border-black/5 pb-4">
+          <ShieldCheck className="text-blue-600" size={24} />
+          <h3 className="font-black uppercase text-sm tracking-tighter">Metadata & SEO</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase text-slate-500">Nombre Corto</label>
+            <input value={config.nombreCorto} onChange={(e) => config.setConfig({ nombreCorto: e.target.value })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" />
           </div>
-          <div>
-            <h3 className="font-black uppercase text-sm tracking-tighter text-black">
-              Personalización en Vivo
-            </h3>
-            <p className="text-[10px] text-slate-500 font-bold uppercase">
-              SaaS Identity Manager
-            </p>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase text-slate-500">Nombre Mediano (Marca)</label>
+            <input value={config.nombreMedio} onChange={(e) => config.setConfig({ nombreMedio: e.target.value })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase text-slate-500">Nombre Largo (SEO)</label>
+            <input value={config.nombreLargo} onChange={(e) => config.setConfig({ nombreLargo: e.target.value })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" />
           </div>
         </div>
-        
-        {isSaving && (
-          <div className="flex items-center gap-2 text-red-600 animate-bounce">
-            <RefreshCcw size={14} className="animate-spin" />
-            <span className="text-[10px] font-black uppercase">Sincronizando...</span>
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        
-        {/* COLUMNA IZQUIERDA: PALETA DE COLORES */}
-        <div className="space-y-6">
-          <div className="group">
-            <label className="text-[11px] font-black uppercase text-slate-600 block mb-3 ml-1 tracking-widest">
-              Color Primario <span className="text-red-500">(Botones y Títulos)</span>
-            </label>
-            <div className="flex gap-3">
-              <input 
-                type="color" 
-                value={config.colorPrimario} 
-                onChange={(e) => handleColorChange('colorPrimario', e.target.value)}
-                className="w-14 h-14 rounded-xl cursor-pointer border-2 border-black shadow-sm bg-transparent"
-              />
-              <input 
-                type="text" 
-                value={config.colorPrimario} 
-                onChange={(e) => handleColorChange('colorPrimario', e.target.value)}
-                className="flex-1 px-5 text-sm font-mono font-bold uppercase rounded-xl border-2 border-black/10 focus:border-red-600 outline-none transition-all bg-white text-black"
-              />
-            </div>
-          </div>
-
-          <div className="group">
-            <label className="text-[11px] font-black uppercase text-slate-600 block mb-3 ml-1 tracking-widest">
-              Color Secundario <span className="text-slate-400">(Fondos y Acabados)</span>
-            </label>
-            <div className="flex gap-3">
-              <input 
-                type="color" 
-                value={config.colorSecundario} 
-                onChange={(e) => handleColorChange('colorSecundario', e.target.value)}
-                className="w-14 h-14 rounded-xl cursor-pointer border-2 border-black shadow-sm bg-transparent"
-              />
-              <input 
-                type="text" 
-                value={config.colorSecundario} 
-                onChange={(e) => handleColorChange('colorSecundario', e.target.value)}
-                className="flex-1 px-5 text-sm font-mono font-bold uppercase rounded-xl border-2 border-black/10 focus:border-red-600 outline-none transition-all bg-white text-black"
-              />
-            </div>
-          </div>
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase text-slate-500">Descripción para Google/WhatsApp</label>
+          <textarea value={config.metaDescripcion} onChange={(e) => config.setConfig({ metaDescripcion: e.target.value })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full h-20 resize-none" />
         </div>
+      </section>
 
-        {/* COLUMNA DERECHA: LOGO Y ACCIONES */}
-        <div className="space-y-6">
-          <div>
-            <label className="text-[11px] font-black uppercase text-slate-600 block mb-3 ml-1 tracking-widest">
-              Asset de Marca <span className="text-slate-400">(URL Logo PNG)</span>
-            </label>
-            <div className="flex gap-3">
-              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center border-2 border-black overflow-hidden shrink-0 shadow-sm">
-                <img 
-                  src={getDriveDirectLink(config.logoUrl, "200")} 
-                  alt="Preview" 
-                  className="max-w-[80%] max-h-[80%] object-contain"
-                  onError={(e) => (e.currentTarget.src = "/logo-nuevo.png")}
-                />
+      {/* --- SECCIÓN 2: PALETA DE 9 COLORES --- */}
+      <section className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-6">
+        <div className="flex items-center gap-3 border-b-2 border-black/5 pb-4">
+          <Palette className="text-red-600" size={24} />
+          <h3 className="font-black uppercase text-sm tracking-tighter">Sistema de Colores (9 Tonos)</h3>
+        </div>
+        
+        {/* FILA OSCUROS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {['Oscuro1', 'Oscuro2', 'Oscuro3'].map((key) => (
+            <div key={key} className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-400">Tono {key}</label>
+              <div className="flex gap-2">
+                <input type="color" value={(config as any)[`color${key}`]} onChange={(e) => config.setConfig({ [`color${key}`]: e.target.value })} className="w-12 h-12 rounded-lg border-2 border-black/10" />
+                <input type="text" value={(config as any)[`color${key}`]} onChange={(e) => config.setConfig({ [`color${key}`]: e.target.value })} className="flex-1 bg-white border-2 border-black/10 p-2 rounded-lg font-mono text-xs uppercase" />
               </div>
-              <input 
-                type="text" 
-                placeholder="Pegá el link de Drive aquí..."
-                value={config.logoUrl}
-                onChange={(e) => config.setConfig({ logoUrl: e.target.value })}
-                className="flex-1 px-5 text-xs font-bold rounded-xl border-2 border-black/10 focus:border-red-600 outline-none transition-all bg-white text-black"
-              />
             </div>
+          ))}
+        </div>
+        {/* FILA MEDIOS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {['Medio1', 'Medio2', 'Medio3'].map((key) => (
+            <div key={key} className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-red-400">Tono {key}</label>
+              <div className="flex gap-2">
+                <input type="color" value={(config as any)[`color${key}`]} onChange={(e) => config.setConfig({ [`color${key}`]: e.target.value })} className="w-12 h-12 rounded-lg border-2 border-black/10" />
+                <input type="text" value={(config as any)[`color${key}`]} onChange={(e) => config.setConfig({ [`color${key}`]: e.target.value })} className="flex-1 bg-white border-2 border-black/10 p-2 rounded-lg font-mono text-xs uppercase" />
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* FILA CLAROS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {['Claro1', 'Claro2', 'Claro3'].map((key) => (
+            <div key={key} className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-300">Tono {key}</label>
+              <div className="flex gap-2">
+                <input type="color" value={(config as any)[`color${key}`]} onChange={(e) => config.setConfig({ [`color${key}`]: e.target.value })} className="w-12 h-12 rounded-lg border-2 border-black/10" />
+                <input type="text" value={(config as any)[`color${key}`]} onChange={(e) => config.setConfig({ [`color${key}`]: e.target.value })} className="flex-1 bg-white border-2 border-black/10 p-2 rounded-lg font-mono text-xs uppercase" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- SECCIÓN 3: REDES & CONTACTO --- */}
+      <section className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-6">
+        <div className="flex items-center gap-3 border-b-2 border-black/5 pb-4">
+          <Share2 className="text-emerald-600" size={24} />
+          <h3 className="font-black uppercase text-sm tracking-tighter">Conectividad Social</h3>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {['waUser', 'igUser', 'ttUser', 'publicEmail'].map((field) => (
+            <div key={field} className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-500">{field.replace('User', '')}</label>
+              <input value={(config as any)[field]} onChange={(e) => config.setConfig({ [field]: e.target.value })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full text-xs" />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- SECCIÓN 4: FINANZAS & PAGOS --- */}
+      <section className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-6">
+        <div className="flex items-center gap-3 border-b-2 border-black/5 pb-4">
+          <Wallet className="text-amber-600" size={24} />
+          <h3 className="font-black uppercase text-sm tracking-tighter">Datos de Cobro</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-500">Alias</label><input value={config.alias} onChange={(e) => config.setConfig({ alias: e.target.value })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" /></div>
+          <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-500">CBU</label><input value={config.cbu} onChange={(e) => config.setConfig({ cbu: e.target.value })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full text-xs" /></div>
+          <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-500">% Desc. Transf.</label><input type="number" value={config.descuentoEfectivo} onChange={(e) => config.setConfig({ descuentoEfectivo: parseInt(e.target.value) })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" /></div>
+        </div>
+      </section>
+
+      {/* --- SECCIÓN 5: LOGÍSTICA & ENVÍOS --- */}
+      <section className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-6">
+        <div className="flex items-center gap-3 border-b-2 border-black/5 pb-4">
+          <Truck className="text-purple-600" size={24} />
+          <h3 className="font-black uppercase text-sm tracking-tighter">Logística</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-500">Envío Local ($)</label><input type="number" value={config.envioLocal} onChange={(e) => config.setConfig({ envioLocal: parseInt(e.target.value) })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" /></div>
+          <div className="space-y-2"><label className="text-[10px] font-black uppercase text-slate-500">Envío Nacional ($)</label><input type="number" value={config.envioNacional} onChange={(e) => config.setConfig({ envioNacional: parseInt(e.target.value) })} className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" /></div>
+        </div>
+      </section>
+
+      {/* --- SECCIÓN 6: DISEÑO DE BOTONES & CATEGORÍAS --- */}
+      <section className="bg-[#faf7ed] p-8 rounded-2xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-8">
+        <div className="flex items-center gap-3 border-b-2 border-black/5 pb-4">
+          <LayoutGrid className="text-orange-600" size={24} />
+          <h3 className="font-black uppercase text-sm tracking-tighter">Estructura & Dimensiones</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="space-y-6">
+             <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase text-slate-500 flex justify-between">Categorías Landing <span>(Separadas por coma)</span></label>
+                <input value={config.categoriasLanding} onChange={(e) => config.setConfig({ categoriasLanding: e.target.value })} placeholder="ej: remeras,pantalones,buzos" className="bg-white border-2 border-black/10 p-3 rounded-xl font-bold w-full" />
+             </div>
+             {/* SLIDERS */}
+             {[
+               { label: 'Tamaño Logo Header', key: 'logoSize', min: 40, max: 200 },
+               { label: 'Botones Navegación', key: 'navButtonSize', min: 60, max: 150 },
+               { label: 'Botones en Páginas', key: 'pageButtonSize', min: 100, max: 300 }
+             ].map((item) => (
+               <div key={item.key} className="space-y-2">
+                 <label className="text-[10px] font-black uppercase text-slate-500 flex justify-between">{item.label} <span>{(config as any)[item.key]}px</span></label>
+                 <input type="range" min={item.min} max={item.max} value={(config as any)[item.key]} onChange={(e) => config.setConfig({ [item.key]: parseInt(e.target.value) })} className="w-full h-2 bg-slate-200 rounded-lg appearance-none accent-black" />
+               </div>
+             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <button 
-              onClick={() => config.resetConfig()}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-slate-200 hover:bg-slate-300 text-[11px] font-black uppercase rounded-2xl transition-all text-slate-700 border border-black/5"
-            >
-              <RefreshCcw size={16} /> Restaurar Default
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-slate-500">URL del Logo (Drive)</label>
+              <div className="flex gap-4">
+                <div className="w-20 h-20 bg-white rounded-xl border-2 border-black flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                  <img src={getDriveDirectLink(config.logoUrl, "200")} alt="Logo" className="max-w-[80%] max-h-[80%] object-contain" onError={(e) => (e.currentTarget.src = "/logo-nuevo.png")} />
+                </div>
+                <textarea value={config.logoUrl} onChange={(e) => config.setConfig({ logoUrl: e.target.value })} className="flex-1 bg-white border-2 border-black/10 p-3 rounded-xl font-bold text-[10px] h-20 resize-none" placeholder="Link de Drive..." />
+              </div>
+            </div>
+            <button onClick={handlePublish} disabled={isSaving} className="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-[6px_6px_0px_0px_rgba(220,38,38,1)] hover:bg-red-600 transition-all active:translate-y-1 active:shadow-none">
+              {isSaving ? "Sincronizando..." : "PUBLICAR CONFIGURACIÓN"}
             </button>
-            
-            <button 
-              onClick={handlePublish}
-              disabled={isSaving}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-black text-white hover:bg-red-600 text-[11px] font-black uppercase rounded-2xl transition-all shadow-[4px_4px_0px_0px_rgba(220,38,38,1)] active:translate-y-1 active:shadow-none disabled:opacity-50"
-            >
-              <Save size={16} /> Publicar Cambios
+            <button onClick={() => config.resetConfig()} className="w-full text-slate-400 font-black uppercase text-[10px] hover:text-black transition-colors">
+              Restaurar valores de fábrica
             </button>
           </div>
         </div>
-      </div>
-
-      {/* FOOTER DE ESTADO */}
-      <div className="p-4 bg-red-600/5 border-2 border-red-600/10 rounded-2xl flex items-start gap-4">
-        <div className="bg-red-600 rounded-full p-1 mt-0.5">
-          <Info size={14} className="text-white" />
-        </div>
-        <div className="space-y-1">
-          <p className="text-[10px] text-red-900 leading-tight font-black uppercase tracking-tighter">
-            Modo Simulador Activo
-          </p>
-          <p className="text-[9px] text-red-800/70 font-medium leading-tight">
-            Los cambios en colores y logo son visibles instantáneamente en tu sesión. 
-            Al hacer clic en <span className="font-bold">Publicar</span>, se guardarán en la Planilla Maestra para todos los usuarios.
-          </p>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

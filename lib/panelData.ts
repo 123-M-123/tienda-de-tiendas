@@ -1,4 +1,3 @@
-// lib/panelData.ts - REEMPLAZO COMPLETO CON SOPORTE PARA CONFIG
 import { google } from 'googleapis';
 import { auth } from "@/auth";
 import { ADMIN_EMAIL, CLIENTES } from "./clientes";
@@ -17,53 +16,39 @@ const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 export async function getPanelData(pestaña: string, targetEmail?: string) {
   const session = await auth();
   if (!session?.user?.email) return [];
-
   const userEmail = session.user.email.trim().toLowerCase();
   const isAdmin = userEmail === ADMIN_EMAIL.trim().toLowerCase();
-  const emailReferencia = (isAdmin && targetEmail) ? targetEmail.trim().toLowerCase() : userEmail;
+  const emailRef = (isAdmin && targetEmail) ? targetEmail.trim().toLowerCase() : userEmail;
   
-  const cliente = CLIENTES[emailReferencia];
-  if (!cliente) return [];
-
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: `${pestaña}!A2:M1000`, // Ampliado a M para cubrir todos los campos de Config
+      range: `${pestaña}!A2:M1000`,
     });
-
     const rows = response.data.values || [];
-
     if (isAdmin && !targetEmail) return rows;
-
-    return rows.filter(row => {
-      const emailEnFila = row[0]?.toString().trim().toLowerCase();
-      if (!emailEnFila) return false;
-      return CLIENTES[emailEnFila]?.gaId === cliente.gaId;
-    });
-
+    return rows.filter(row => row[0]?.toString().trim().toLowerCase() === emailRef);
   } catch (error) {
-    console.error(`Error en getPanelData (${pestaña}):`, error);
     return [];
   }
 }
 
-// Nueva función específica para extraer el objeto de configuración
+// 🚩 FIX DE MAPEADO PARA LAYOUT Y COMPONENTES
 export async function getStoreConfig(targetEmail?: string) {
   const data = await getPanelData("Config", targetEmail);
   if (!data || data.length === 0) return null;
 
-  const row = data[0]; // Tomamos la primera coincidencia del cliente
+  const row = data[0];
   return {
     email: row[0],
-    nombre: row[1],
+    nombreMedio: row[1] || "Tienda de Tiendas", // 🚩 Cambiado para matchear con Layout
     logo: row[2],
     colorPrimario: row[3] || "#dc2626",
     colorSecundario: row[4] || "#000000",
-    waNumero: row[6],
+    waUser: row[6],
     igUser: row[7],
     metaTitle: row[8],
     metaDesc: row[9],
-    previewUrl: row[10],
-    version: row[11] || "1",
+    previewUrl: row[10] || "/preview-2.jpg",
   };
 }
