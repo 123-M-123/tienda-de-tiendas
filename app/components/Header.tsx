@@ -59,20 +59,21 @@ export default function Header() {
         
         <button 
           onClick={() => setIsSidebarOpen(true)}
-          className="absolute left-4 top-6 p-2 text-white/70 hover:text-dinamico-primario transition-colors"
+          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-dinamico-primario transition-colors"
         >
-          <Menu size={24} />
+          <Menu size={28} />
         </button>
 
-        <div className="max-w-5xl mx-auto px-4 py-4 flex justify-center">
+        {/* CONTENEDOR DE LOGO AGRANDADO */}
+        <div className="max-w-5xl mx-auto px-4 py-6 flex justify-center">
           <Link href={getHref('/')}>
             <Image
               src={config.logoUrl}
               alt={config.tiendaNombre}
-              width={280}
-              height={70}
+              width={400} // Aumentado para mejor resolución
+              height={120} // Aumentado
               priority
-              className="w-auto h-10 md:h-12 object-contain"
+              className="w-auto h-14 md:h-20 object-contain transition-transform hover:scale-105" 
             />
           </Link>
         </div>

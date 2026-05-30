@@ -5,9 +5,9 @@ export default async function PedidosPage({ searchParams }: { searchParams: { ve
   const pedidos = await getPanelData("Pedidos", searchParams.vendedor) || [];
   return (
     <div className="space-y-6">
-      <div className="inline-flex items-center gap-3 border-b-2 border-emerald-700 pb-2">
-        <ClipboardList size={24} className="text-slate-600" />
-        <h2 className="text-xl font-black uppercase tracking-tight text-black">Validar Pedidos</h2>
+      <div className="inline-flex items-center gap-3 border-b-4 border-emerald-600 pb-2">
+        <ClipboardList size={24} className="text-emerald-600" />
+        <h2 className="text-xl font-black uppercase tracking-tight text-black italic">Validar Pedidos</h2>
       </div>
       
       <div className="rounded-xl border border-black shadow-2xl overflow-hidden">
@@ -23,7 +23,7 @@ export default async function PedidosPage({ searchParams }: { searchParams: { ve
             </thead>
             <tbody className="divide-y divide-black/10 bg-[#faf7ed]">
               {pedidos.map((row: any, i: number) => (
-                <tr key={i} className="hover:bg-transparent transition-colors">
+                <tr key={i} className="hover:bg-black/5 transition-colors">
                   <td className="px-6 py-4 text-[10px] text-slate-600 font-bold border-r border-black/5">{row[1]}</td>
                   <td className="px-6 py-4 text-sm font-bold text-black border-r border-black/5">{row[2]}</td>
                   <td className="px-6 py-4 text-sm font-black text-black">${Number(row[3]).toLocaleString()}</td>

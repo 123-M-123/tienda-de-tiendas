@@ -5,10 +5,9 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: { 
   const data = await getAnalyticsData(searchParams.vendedor);
   const rows = data.rows || [];
 
-  // 1. TOTAL ABSOLUTO (La base para todos los cálculos)
+  // 1. TOTAL ABSOLUTO (Garantiza coherencia en cálculos)
   const totalVisitas = rows.reduce((acc: number, row: any) => acc + Number(row.metricValues[1].value), 0) || 0;
   
-  // 2. PROCESAMIENTO CON TOTAL REAL (Garantiza el 100%)
   const ciudades = processGroupedData(rows, 0);
   const canales = processGroupedData(rows, 2);
   const dispositivos = processGroupedData(rows, 3);
@@ -23,27 +22,27 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: { 
 
   return (
     <div className="space-y-8">
-      <div className="inline-flex items-center gap-3 border-b-2 border-black pb-2">
-        <BarChart3 size={24} className="text-slate-600" />
-        <h2 className="text-xl font-black uppercase tracking-tight text-black">Métricas de Audiencia</h2>
+      {/* CABECERA NORMALIZADA */}
+      <div className="inline-flex items-center gap-3 border-b-4 border-slate-400 pb-2">
+        <BarChart3 size={24} className="text-slate-500" />
+        <h2 className="text-xl font-black uppercase tracking-tight text-black italic">Métricas de Audiencia</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-[#faf7ed] p-6 rounded-xl border border-black shadow-lg relative overflow-hidden group">
-          <Users size={110} className="absolute -right-4 -bottom-6 text-slate-900/20" />
+          <Users size={110} className="absolute -right-4 -bottom-6 text-slate-900/10" />
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest relative z-10">Visitas totales (30 días)</p>
           <h2 className="text-4xl font-black text-black mt-1 relative z-10">{totalVisitas.toLocaleString()}</h2>
         </div>
 
         <div className="bg-[#faf7ed] p-6 rounded-xl border border-black shadow-lg relative overflow-hidden">
-          <Activity size={110} className="absolute -right-4 -bottom-6 text-slate-900/20" />
+          <Activity size={110} className="absolute -right-4 -bottom-6 text-slate-900/10" />
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Tendencia de actividad</p>
           <div className="relative z-10 h-16 flex items-end"><SimpleLineChart rows={rows} /></div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-10">
-        {/* CIUDADES */}
         <div className="rounded-xl border border-black shadow-xl overflow-hidden bg-[#faf7ed]">
           <div className="bg-slate-900 p-4 flex items-center gap-2">
             <MapPin size={16} className="text-white" />
@@ -64,9 +63,8 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: { 
           </div>
         </div>
 
-        {/* DISPOSITIVOS (FIX 100%) */}
         <div className="space-y-4">
-          <StatCardSmall title="Tiempo de Permanencia" value={`${avgTime} min`} desc="Cuánto tiempo real miran los productos." icon={<Clock size={20}/>} />
+          <StatCardSmall title="Tiempo de Permanencia" value={`${avgTime} min`} desc="Tiempo real de navegación." icon={<Clock size={20}/>} />
           <div className="p-5 rounded-xl border border-black shadow-lg bg-[#faf7ed] flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white"><Smartphone size={20}/></div>
             <div className="flex-1">
@@ -75,7 +73,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: { 
                 {dispositivos.map((d:any, i:number) => (
                   <div key={i} className="flex flex-col">
                     <span className="text-lg font-black text-black">
-                      {d.name.toLowerCase() === 'mobile' ? '📱' : '💻'} {((d.count / totalVisitas) * 100).toFixed(0)}%
+                      {d.name.toLowerCase() === 'mobile' ? '📱' : '💻'} {((d.count / (totalVisitas || 1)) * 100).toFixed(0)}%
                     </span>
                     <span className="text-[8px] font-bold text-slate-400 uppercase">{d.name}</span>
                   </div>
@@ -89,7 +87,6 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: { 
   );
 }
 
-// Helpers... (SimpleLineChart, StatCardSmall, processGroupedData se mantienen igual)
 function StatCardSmall({ title, value, desc, icon }: any) {
   return (
     <div className="p-5 rounded-xl border border-black shadow-lg bg-[#faf7ed] flex items-center gap-4">
@@ -107,7 +104,7 @@ function processGroupedData(rows: any[], dimIndex: number) {
   const map: any = {};
   rows?.forEach(row => {
     const name = row.dimensionValues[dimIndex].value;
-    const count = Number(row.metricValues[1].value); // Usamos screenPageViews para coherencia
+    const count = Number(row.metricValues[1].value);
     if(name !== '(not set)') map[name] = (map[name] || 0) + count;
   });
   return Object.entries(map).map(([name, count]) => ({ name, count: count as number })).sort((a, b) => b.count - a.count);

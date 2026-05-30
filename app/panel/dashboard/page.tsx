@@ -1,14 +1,13 @@
 import { auth } from "@/auth";
 import { getPanelData } from "@/lib/panelData";
 import { getAnalyticsData } from "@/lib/analyticsData";
-import { BarChart3, ShoppingBag, Wallet, Box } from "lucide-react";
+import { BarChart3, ShoppingBag, Wallet, Box, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
 export default async function DashboardPage({ searchParams }: { searchParams: { vendedor?: string } }) {
   const session = await auth();
   const vendedorSeleccionado = searchParams.vendedor;
 
-  // Traemos los datos
   const pedidos = await getPanelData("Pedidos", vendedorSeleccionado) || [];
   const pagosMP = await getPanelData("webhoock MP", vendedorSeleccionado) || [];
   const productos = await getPanelData("Carga de productos", vendedorSeleccionado) || [];
@@ -19,12 +18,18 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
   return (
     <div className="space-y-8">
+      {/* CABECERA NORMALIZADA */}
+      <div className="inline-flex items-center gap-3 border-b-4 border-slate-900 pb-2">
+        <LayoutDashboard size={24} className="text-slate-900" />
+        <h2 className="text-xl font-black uppercase tracking-tight text-black italic">Resumen de Pantalla</h2>
+      </div>
+
       {/* GRILLA DE MÉTRICAS */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard title="Visitas" value={totalVisitas.toLocaleString()} icon={<BarChart3 size={70} />} colorClass="text-slate-900/20" accentColor="text-slate-800" />
-        <MetricCard title="Pedidos" value={pedidos.length} icon={<ShoppingBag size={70} />} colorClass="text-emerald-900/20" accentColor="text-emerald-700" />
-        <MetricCard title="Ventas" value={`$${totalMP.toLocaleString()}`} icon={<Wallet size={70} />} colorClass="text-blue-900/20" accentColor="text-blue-700" />
-        <MetricCard title="Artículos" value={productos.length} icon={<Box size={70} />} colorClass="text-orange-900/20" accentColor="text-orange-700" />
+        <MetricCard title="Visitas" value={totalVisitas.toLocaleString()} icon={<BarChart3 size={70} />} colorClass="text-slate-900/10" accentColor="text-slate-800" />
+        <MetricCard title="Pedidos" value={pedidos.length} icon={<ShoppingBag size={70} />} colorClass="text-emerald-900/10" accentColor="text-emerald-700" />
+        <MetricCard title="Ventas" value={`$${totalMP.toLocaleString()}`} icon={<Wallet size={70} />} colorClass="text-blue-900/10" accentColor="text-blue-700" />
+        <MetricCard title="Stock" value={productos.length} icon={<Box size={70} />} colorClass="text-orange-900/10" accentColor="text-orange-700" />
       </section>
 
       {/* TABLA DE MOVIMIENTOS */}

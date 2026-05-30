@@ -1,29 +1,17 @@
 import { auth, signOut } from "@/auth";
-import NextLink from "next/link";
 import { ADMIN_EMAIL, CLIENTES } from "@/lib/clientes";
 import { 
   LayoutDashboard, ClipboardList, CreditCard, 
   Package, Store, BarChart3, LogOut, Image, Settings, ShoppingBag 
 } from "lucide-react";
 import NavLink from "./NavLink";
-import { headers } from "next/headers"; // 🚩 Para detectar la ruta actual
+import SelectorClientes from "./SelectorClientes";
+import { Suspense } from "react";
 
-export default async function PanelLayout({ 
-  children, 
-  searchParams 
-}: { 
-  children: React.ReactNode, 
-  searchParams: { vendedor?: string } 
-}) {
+export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const userEmail = session?.user?.email || "";
   const isAdmin = userEmail.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase();
-  
-  // 🚩 CAPTURA DE RUTA ACTUAL (Para no saltar al Dashboard)
-  const headersList = headers();
-  const fullPath = headersList.get("x-invoke-path") || "/panel/dashboard";
-  
-  const vendedorSeleccionado = searchParams?.vendedor?.trim().toLowerCase();
 
   const clientesUnicos = Array.from(
     new Map(Object.entries(CLIENTES).map(([email, info]) => [info.gaId, { ...info, emailPrincipal: email }])).values()
@@ -32,6 +20,7 @@ export default async function PanelLayout({
   return (
     <div className="min-h-screen bg-[#e6dcb7] flex flex-col text-[#1A1A1A] font-sans">
       
+      {/* BARRA SUPERIOR */}
       <header className="bg-white border-b border-slate-300 sticky top-0 z-50 px-4 md:px-8 py-2 flex justify-between items-center shadow-md">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center shrink-0">
@@ -41,12 +30,11 @@ export default async function PanelLayout({
             <span>PANEL DE</span><span>CONTROL</span>
           </div>
         </div>
-
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 pr-2 border-r border-slate-200 text-right">
             <p className="text-[10px] font-black text-black">{userEmail.split('@')[0]}</p>
-            <div className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-black">
-              {userEmail?.[0]?.toUpperCase()}
+            <div className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-black uppercase">
+              {userEmail?.[0]}
             </div>
           </div>
           <form action={async () => { "use server"; await signOut({ redirectTo: "/login" }); }}>
@@ -55,39 +43,17 @@ export default async function PanelLayout({
         </div>
       </header>
 
-      {/* SELECTOR DE WEBS (FIX: Mantiene pestaña y Pinta Activo) */}
+      {/* SELECTOR DE WEBS */}
       {isAdmin && (
         <div className="bg-white/80 backdrop-blur-sm border-b border-slate-300 px-4 py-2 overflow-x-auto no-scrollbar shadow-sm">
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 w-fit mx-auto md:mx-0">
-            
-            <NextLink 
-              href={fullPath} // 🚩 Te mantiene en la pestaña actual
-              className={`px-3 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all ${!vendedorSeleccionado ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-white'}`}
-            >
-              Global
-            </NextLink>
-
-            {clientesUnicos.map(cliente => {
-              const isSelected = cliente.emailPrincipal.trim().toLowerCase() === vendedorSeleccionado;
-              return (
-                <NextLink 
-                  key={cliente.gaId} 
-                  href={`${fullPath}?vendedor=${cliente.emailPrincipal}`} // 🚩 PERSISTENCIA DE RUTA
-                  className={`px-3 py-1.5 whitespace-nowrap text-[9px] font-black uppercase rounded-lg border transition-all ${
-                    isSelected 
-                      ? 'bg-slate-900 text-white border-slate-950 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] scale-105' 
-                      : 'bg-white text-slate-600 border-slate-100 hover:text-blue-600'
-                  }`}
-                >
-                  {cliente.nombre}
-                </NextLink>
-              );
-            })}
-          </div>
+          <Suspense fallback={<div className="h-8 w-40 bg-slate-100 animate-pulse rounded-lg" />}>
+            <SelectorClientes clientes={clientesUnicos} />
+          </Suspense>
         </div>
       )}
 
       <div className="flex flex-col flex-1">
+        {/* NAVEGACIÓN NORMALIZADA */}
         <aside className="w-full bg-white/50 border-b border-slate-200 p-2 md:p-4 overflow-x-auto no-scrollbar">
           <nav className="flex flex-row gap-2 md:gap-4 justify-start md:justify-center">
             <NavLink href="/panel/dashboard" label="PANTALLA" subLabel="RESUMEN" subColor="text-slate-900" icon={<LayoutDashboard size={18} />} />
@@ -104,4 +70,4 @@ export default async function PanelLayout({
       </div>
     </div>
   );
-} 
+}
