@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { ADMIN_EMAIL } from "./clientes";
+import { ADMIN_EMAIL, CLIENTES } from "./clientes"; // 🛡️ Importación recuperada
 import { getAnalyticsAccessToken } from "./googleAuth";
 
 const propertyMapping: Record<string, string> = {
@@ -21,7 +21,10 @@ export async function getAnalyticsData(targetEmail?: string) {
   if (!userEmail) return { rows: [] };
 
   const emailABuscar = targetEmail ? decodeURIComponent(targetEmail).trim().toLowerCase() : userEmail;
-  const propertyId = propertyMapping[emailABuscar] || propertyMapping[ADMIN_EMAIL];
+  
+  // 🛡️ LÓGICA DE SOCIEDAD (GAID):
+  // Buscamos el ID en el mapeo manual O en el diccionario de CLIENTES para que socios vean lo mismo.
+  const propertyId = propertyMapping[emailABuscar] || CLIENTES[emailABuscar]?.gaId || "534648857";
 
   try {
     const token = await getAnalyticsAccessToken();
@@ -30,8 +33,18 @@ export async function getAnalyticsData(targetEmail?: string) {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
-        metrics: [{ name: "activeUsers" }, { name: "screenPageViews" }, { name: "userEngagementDuration" }, { name: "engagementRate" }],
-        dimensions: [{ name: "city" }, { name: "date" }, { name: "sessionDefaultChannelGroup" }, { name: "deviceCategory" }],
+        metrics: [
+          { name: "activeUsers" }, 
+          { name: "screenPageViews" }, 
+          { name: "userEngagementDuration" }, 
+          { name: "engagementRate" }
+        ],
+        dimensions: [
+          { name: "city" }, 
+          { name: "date" }, 
+          { name: "sessionDefaultChannelGroup" }, 
+          { name: "deviceCategory" }
+        ],
       }),
       cache: 'no-store'
     });
