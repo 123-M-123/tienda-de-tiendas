@@ -30,7 +30,7 @@ const mainRow = [
 const sideNavItems = [
   { href: '#', label: 'Documentación', icon: <BookOpen size={18} /> },
   { href: '/panel/dashboard', label: 'Panel de Control', icon: <LayoutDashboard size={18} /> },
-  { href: '#', label: 'Configuración SaaS', icon: <Settings size={18} /> },
+  { href: '/panel/ajustes', label: 'Configuración SaaS', icon: <Settings size={18} /> },
   { href: 'https://wa.me/5491153778475', label: 'Soporte Técnico', icon: <MessageSquare size={18} /> },
 ]
 
@@ -38,7 +38,7 @@ export default function Header() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const vendedor = searchParams.get("vendedor")
-  const config = useConfig()
+  const config = useConfig() // 🚩 Acceso a logoSize, logoUrl y colorPrimario
   
   const [isRow2Open, setIsRow2Open] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -48,6 +48,7 @@ export default function Header() {
     return pathname === href
   }
 
+  // Helper para persistencia del vendedor en todos los links
   const getHref = (href: string) => {
     if (href.startsWith('http') || href === '#') return href;
     return vendedor ? `${href}?vendedor=${vendedor}` : href;
@@ -55,8 +56,10 @@ export default function Header() {
 
   return (
     <>
+      {/* --- HEADER PRINCIPAL --- */}
       <header className="sticky top-0 z-60 bg-black border-b border-white/10 shadow-2xl">
         
+        {/* BOTÓN HAMBURGUESA (IZQUIERDA) */}
         <button 
           onClick={() => setIsSidebarOpen(true)}
           className="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-dinamico-primario transition-colors"
@@ -64,21 +67,25 @@ export default function Header() {
           <Menu size={28} />
         </button>
 
-        {/* CONTENEDOR DE LOGO AGRANDADO */}
-        <div className="max-w-5xl mx-auto px-4 py-6 flex justify-center">
+        {/* LOGO CENTRAL CON TAMAÑO VARIABLE */}
+        <div className="max-w-5xl mx-auto px-4 py-4 flex justify-center">
           <Link href={getHref('/')}>
-            <Image
-              src={config.logoUrl}
-              alt={config.tiendaNombre}
-              width={400} // Aumentado para mejor resolución
-              height={120} // Aumentado
-              priority
-              className="w-auto h-14 md:h-20 object-contain transition-transform hover:scale-105" 
-            />
+            <div 
+              style={{ height: `${config.logoSize}px` }} 
+              className="relative flex items-center transition-all duration-300 ease-in-out"
+            >
+              <img
+                src={config.logoUrl}
+                alt={config.tiendaNombre}
+                style={{ height: '100%', width: 'auto', objectFit: 'contain' }}
+                className="transition-transform hover:scale-105"
+              />
+            </div>
           </Link>
         </div>
 
         <div className="border-t border-white/5 bg-neutral-950">
+          {/* FILA 1: NAVEGACIÓN CENTRAL */}
           <div className="max-w-3xl mx-auto px-3 py-2 relative flex items-center justify-center">
             <nav className="flex justify-center gap-1">
               {mainRow.map((item) => (
@@ -91,7 +98,7 @@ export default function Header() {
                   }}
                   className={`
                     px-4 py-2 min-w-18.75 rounded-full text-center transition-all text-[11px] md:text-xs font-bold uppercase tracking-tight
-                    ${isActive(item.href) ? 'text-white' : 'text-white/60 hover:text-white hover:bg-white/5'}
+                    ${isActive(item.href) ? 'text-white shadow-lg' : 'text-white/60 hover:text-white hover:bg-white/5'}
                     ${item.label === 'Empezar' ? 'border text-white hover:bg-white hover:text-black ml-2' : ''}
                   `}
                 >
@@ -100,6 +107,7 @@ export default function Header() {
               ))}
             </nav>
 
+            {/* BOTÓN TOGGLE FILA 2 */}
             <button
               onClick={() => setIsRow2Open(!isRow2Open)}
               className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-white/50 hover:text-dinamico-primario transition-colors"
@@ -108,6 +116,7 @@ export default function Header() {
             </button>
           </div>
 
+          {/* FILA 2: DESPLEGABLE CON GLASSMORPHISM */}
           <div
             className={`
               overflow-hidden transition-all duration-500 ease-in-out
@@ -129,16 +138,28 @@ export default function Header() {
         </div>
       </header>
 
-      <div className={`fixed inset-0 z-70 transition-all duration-500 ${isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+      {/* --- SIDEBAR LATERAL (NAVEGADOR TÉCNICO) --- */}
+      <div 
+        className={`fixed inset-0 z-70 transition-all duration-500 ${
+          isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
         <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
-        <aside className={`absolute top-0 left-0 h-full w-full max-w-75 bg-neutral-950 border-r border-white/10 p-6 flex flex-col transition-transform duration-500 ease-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <aside 
+          className={`absolute top-0 left-0 h-full w-full max-w-75 bg-neutral-950 border-r border-white/10 p-6 flex flex-col transition-transform duration-500 ease-out ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
           <div className="flex justify-between items-center mb-10">
             <div className="flex flex-col">
               <span className="text-xs font-black text-dinamico-primario uppercase tracking-widest">SaaS Menu</span>
               <span className="text-[10px] text-white/30 uppercase font-bold">{config.tiendaNombre}</span>
             </div>
-            <button onClick={() => setIsSidebarOpen(false)} className="text-white/50 hover:text-white"><X size={24} /></button>
+            <button onClick={() => setIsSidebarOpen(false)} className="text-white/50 hover:text-white">
+              <X size={24} />
+            </button>
           </div>
+
           <nav className="flex flex-col gap-2">
             {sideNavItems.map((item) => (
               <Link

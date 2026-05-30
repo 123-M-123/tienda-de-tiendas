@@ -4,12 +4,13 @@ import { persist } from 'zustand/middleware';
 interface ConfigState {
   tiendaNombre: string;
   logoUrl: string;
-  previewUrl: string; // Nueva variable para OG Image
+  logoSize: number; // 🚩 NUEVA VARIABLE
+  previewUrl: string;
   colorPrimario: string;
   colorSecundario: string;
   waNumero: string;
-  version: string;    // Para el manejo de cache (?v=)
-  isSimulador: boolean;
+  igUser: string;
+  version: string;
   setConfig: (config: Partial<ConfigState>) => void;
   resetConfig: () => void;
 }
@@ -17,12 +18,13 @@ interface ConfigState {
 const defaultConfig = {
   tiendaNombre: "Tienda de Tiendas",
   logoUrl: "/logo-nuevo.png",
+  logoSize: 80, // Tamaño inicial en px
   previewUrl: "/preview.jpg",
   colorPrimario: "#dc2626",
   colorSecundario: "#000000",
   waNumero: "5491153778475",
+  igUser: "tiendadetiendas",
   version: "1.0",
-  isSimulador: false,
 };
 
 export const useConfig = create<ConfigState>()(
@@ -32,8 +34,6 @@ export const useConfig = create<ConfigState>()(
       setConfig: (newConfig) => set((state) => ({ ...state, ...newConfig })),
       resetConfig: () => set(defaultConfig),
     }),
-    {
-      name: 'saas-config-storage',
-    }
+    { name: 'saas-config-storage' }
   )
 );
