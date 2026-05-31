@@ -312,7 +312,7 @@ export default function Customizer({ targetVendedor, isGuest }: CustomizerProps)
               </div>
               <input 
                 type="text"
-                placeholder="Tu WhatsApp (Para que Marcos te identifique)"
+                placeholder="Tu WhatsApp (Para hablar con un diseñador)"
                 value={guestPhone}
                 onChange={(e) => setGuestPhone(e.target.value)}
                 className="bg-white border-2 border-emerald-200 p-4 rounded-xl font-bold w-full text-black outline-none focus:border-emerald-600 shadow-inner"
