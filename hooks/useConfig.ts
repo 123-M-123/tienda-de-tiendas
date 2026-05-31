@@ -2,38 +2,31 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface ProductoSimulado {
-  id: string;
-  titulo: string;
-  precio: number;
-  img: string;
-  cat: string;
-  desc: string;
-  stock: number;
+  id: string; titulo: string; precio: number; img: string; cat: string; desc: string; stock: number;
 }
 
 interface ConfigState {
   isGuestMode: boolean;
-  // Identidad
   nombreCorto: string; nombreMedio: string; nombreLargo: string;
   tiendaNombre: string; metaDescripcion: string;
-  // Assets & Colores
   logoUrl: string; logoSize: number; previewUrl: string; version: string;
   colorOscuro1: string; colorOscuro2: string; colorOscuro3: string;
   colorMedio1: string;  colorMedio2: string;  colorMedio3: string;
   colorClaro1: string;  colorClaro2: string;  colorClaro3: string;
   colorPrimario: string; colorSecundario: string;
-  // Diseño
   buttonRadius: number; categoryMode: 'pill' | 'card' | 'line';
   fontSizeBase: number; navButtonSize: number; pageButtonSize: number;
-  // Redes & Finanzas
   waUser: string; igUser: string; ttUser: string; publicEmail: string;
   cbu: string; cvu: string; alias: string; descuentoEfectivo: number;
   envioLocal: number; envioNacional: number; categoriasLanding: string;
   
-  // 🚩 BOLSA DE PRODUCTOS (INVITADO)
   productosInvitado: ProductoSimulado[];
   addProductoInvitado: (p: ProductoSimulado) => void;
   removeProductoInvitado: (id: string) => void;
+
+  // 🚩 WISHLIST (FAVORITOS)
+  wishlist: string[];
+  toggleWishlist: (id: string) => void;
 
   setConfig: (config: Partial<ConfigState>) => void;
   resetConfig: () => void;
@@ -50,10 +43,11 @@ const defaultConfig = {
   colorPrimario: "#dc2626", colorSecundario: "#000000",
   buttonRadius: 12, categoryMode: 'pill' as const,
   fontSizeBase: 16, navButtonSize: 100, pageButtonSize: 150,
-  waUser: "", igUser: "", ttUser: "", publicEmail: "",
+  waUser: "5491153778475", igUser: "", ttUser: "", publicEmail: "",
   cbu: "", cvu: "", alias: "", descuentoEfectivo: 10,
-  envioLocal: 0, envioNacional: 0, categoriasLanding: "remeras,pantalones",
+  envioLocal: 0, envioNacional: 0, categoriasLanding: "",
   productosInvitado: [],
+  wishlist: [],
 };
 
 export const useConfig = create<ConfigState>()(
@@ -61,12 +55,15 @@ export const useConfig = create<ConfigState>()(
     (set) => ({
       ...defaultConfig,
       addProductoInvitado: (p) => set((state) => ({
-        productosInvitado: state.productosInvitado.length < 10 
-          ? [...state.productosInvitado, p] 
-          : state.productosInvitado
+        productosInvitado: state.productosInvitado.length < 10 ? [...state.productosInvitado, p] : state.productosInvitado
       })),
       removeProductoInvitado: (id) => set((state) => ({
         productosInvitado: state.productosInvitado.filter(p => p.id !== id)
+      })),
+      toggleWishlist: (id) => set((state) => ({
+        wishlist: state.wishlist.includes(id) 
+          ? state.wishlist.filter(item => item !== id) 
+          : [...state.wishlist, id]
       })),
       setConfig: (newConfig) => set((state) => ({ ...state, ...newConfig })),
       resetConfig: () => set(defaultConfig),
