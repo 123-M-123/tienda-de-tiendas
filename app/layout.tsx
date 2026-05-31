@@ -1,4 +1,4 @@
-// app/layout.tsx - FUSIÓN TOTAL BLINDADA (SEO + IPHONE + PREVIEW)
+// app/layout.tsx - FUSIÓN TOTAL BLINDADA (AISLAMIENTO CORREGIDO)
 import type { Metadata, Viewport } from "next"
 import { Suspense } from "react" 
 import Script from "next/script"
@@ -44,18 +44,10 @@ export async function generateMetadata(): Promise<Metadata> {
       description: config?.metaDesc,
       url: "https://tienda-de-tiendas.vercel.app",
       siteName: "Tienda de Tiendas",
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: "Tienda de Tiendas Preview",
-        },
-      ],
+      images: [{ url: ogImage, width: 1200, height: 630 }],
       locale: "es_AR",
       type: "website",
     },
-    // 🛡️ TWITTER METADATA - RECUPERADO
     twitter: {
       card: "summary_large_image",
       title: title,
@@ -65,31 +57,30 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const headersList = headers();
+  // 🚩 DETECCIÓN QUIRÚRGICA: Solo detectamos si el PATH actual es preview.
   const path = headersList.get("x-invoke-path") || "";
-  const referer = headersList.get("referer") || "";
-  const isPreview = path.includes('/preview') || referer.includes('/preview');
+  const isPreview = path.startsWith('/preview');
 
   return (
     <html lang="es" translate="no">
       <head>
-        {/* 🛡️ GOOGLE SEARCH CONSOLE - INTACTO */}
         <meta name="google-site-verification" content="c43EWcKPaKQuTZ0w9M0U0iLPzJEgoEQmVTxKVhzfn8I" />
-
-        {/* 🛡️ IPHONE & PWA FIXES - RECUPERADO */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-        {/* 🛡️ OG FIX MANUAL PARA CATÁLOGOS PREMIUM - RECUPERADO */}
         <meta property="og:image" content="/preview-2.jpg" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Tienda de Tiendas" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
-        {/* 🛡️ GOOGLE ANALYTICS SCRIPTS - RECUPERADO COMPLETO */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
@@ -107,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <DynamicStyles />
         
+        {/* 🛡️ EL MURO: Si NO es preview, mostramos Header y Footer oficiales */}
         {!isPreview ? (
           <>
             <Suspense fallback={<div className="h-20 bg-black w-full" />}>
@@ -116,6 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </>
         ) : (
+          /* En preview, mandamos el contenido limpio */
           <main>{children}</main>
         )}
         
