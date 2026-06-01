@@ -1,4 +1,3 @@
-// app/layout.tsx - FUSIÓN TOTAL BLINDADA (AISLAMIENTO CORREGIDO)
 import type { Metadata, Viewport } from "next"
 import { Suspense } from "react" 
 import Script from "next/script"
@@ -48,6 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "es_AR",
       type: "website",
     },
+    // 🛡️ TWITTER METADATA - RECUPERADO
     twitter: {
       card: "summary_large_image",
       title: title,
@@ -57,34 +57,32 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList = headers();
-  // 🚩 DETECCIÓN QUIRÚRGICA: Solo detectamos si el PATH actual es preview.
   const path = headersList.get("x-invoke-path") || "";
-  const isPreview = path.startsWith('/preview');
+  const referer = headersList.get("referer") || "";
+  const isPreview = path.includes('/preview') || referer.includes('/preview');
 
   return (
     <html lang="es" translate="no">
       <head>
+        {/* 🛡️ GOOGLE SEARCH CONSOLE - RECUPERADO */}
         <meta name="google-site-verification" content="c43EWcKPaKQuTZ0w9M0U0iLPzJEgoEQmVTxKVhzfn8I" />
+
+        {/* 🛡️ IPHONE & PWA FIXES - RECUPERADO */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+        {/* 🛡️ OG FIX MANUAL - RECUPERADO */}
         <meta property="og:image" content="/preview-2.jpg" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Tienda de Tiendas" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
-        />
+        {/* 🛡️ GOOGLE ANALYTICS SCRIPTS - RECUPERADO */}
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
         <Script id="ga-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
@@ -97,8 +95,6 @@ export default function RootLayout({
 
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <DynamicStyles />
-        
-        {/* 🛡️ EL MURO: Si NO es preview, mostramos Header y Footer oficiales */}
         {!isPreview ? (
           <>
             <Suspense fallback={<div className="h-20 bg-black w-full" />}>
@@ -108,10 +104,8 @@ export default function RootLayout({
             <Footer />
           </>
         ) : (
-          /* En preview, mandamos el contenido limpio */
           <main>{children}</main>
         )}
-        
         <Analytics />
       </body>
     </html>

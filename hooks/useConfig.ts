@@ -5,6 +5,13 @@ interface ProductoSimulado {
   id: string; titulo: string; precio: number; img: string; cat: string; desc: string; stock: number;
 }
 
+// 🚩 Interfaz para Banners de Prueba
+interface BannerSimulado {
+  img: string;
+  ubicacion: string;
+  linkDestino: string;
+}
+
 interface ConfigState {
   isGuestMode: boolean;
   nombreCorto: string; nombreMedio: string; nombreLargo: string;
@@ -24,7 +31,11 @@ interface ConfigState {
   addProductoInvitado: (p: ProductoSimulado) => void;
   removeProductoInvitado: (id: string) => void;
 
-  // 🚩 WISHLIST (FAVORITOS)
+  // 🚩 BOLSA DE BANNERS (INVITADO)
+  bannersInvitado: BannerSimulado[];
+  addBannerInvitado: (b: BannerSimulado) => void;
+  removeBannerInvitado: (ubicacion: string) => void;
+
   wishlist: string[];
   toggleWishlist: (id: string) => void;
 
@@ -36,7 +47,8 @@ const defaultConfig = {
   isGuestMode: true,
   nombreCorto: "Tienda", nombreMedio: "Mi Tienda SaaS", nombreLargo: "Mi Nueva Tienda Online",
   tiendaNombre: "Mi Tienda", metaDescripcion: "Diseñada con Tienda de Tiendas",
-  logoUrl: "/logo-nuevo.png", logoSize: 80, previewUrl: "/preview-2.jpg", version: "1.0",
+  logoUrl: "", 
+  logoSize: 80, previewUrl: "/preview-2.jpg", version: "1.0",
   colorOscuro1: "#000000", colorOscuro2: "#1a1a1a", colorOscuro3: "#333333",
   colorMedio1: "#dc2626",  colorMedio2: "#ef4444",  colorMedio3: "#f87171",
   colorClaro1: "#ffffff",  colorClaro2: "#f3f4f6",  colorClaro3: "#e5e7eb",
@@ -47,6 +59,7 @@ const defaultConfig = {
   cbu: "", cvu: "", alias: "", descuentoEfectivo: 10,
   envioLocal: 0, envioNacional: 0, categoriasLanding: "",
   productosInvitado: [],
+  bannersInvitado: [], // 🚩 Iniciamos vacío
   wishlist: [],
 };
 
@@ -55,15 +68,20 @@ export const useConfig = create<ConfigState>()(
     (set) => ({
       ...defaultConfig,
       addProductoInvitado: (p) => set((state) => ({
-        productosInvitado: state.productosInvitado.length < 10 ? [...state.productosInvitado, p] : state.productosInvitado
+        productosInvitado: [...state.productosInvitado.filter(i => i.id !== p.id), p]
       })),
       removeProductoInvitado: (id) => set((state) => ({
         productosInvitado: state.productosInvitado.filter(p => p.id !== id)
       })),
+      // 🚩 GESTIÓN DE BANNERS INVITADO
+      addBannerInvitado: (b) => set((state) => ({
+        bannersInvitado: [...state.bannersInvitado.filter(item => item.ubicacion !== b.ubicacion), b]
+      })),
+      removeBannerInvitado: (ubicacion) => set((state) => ({
+        bannersInvitado: state.bannersInvitado.filter(b => b.ubicacion !== ubicacion)
+      })),
       toggleWishlist: (id) => set((state) => ({
-        wishlist: state.wishlist.includes(id) 
-          ? state.wishlist.filter(item => item !== id) 
-          : [...state.wishlist, id]
+        wishlist: state.wishlist.includes(id) ? state.wishlist.filter(item => item !== id) : [...state.wishlist, id]
       })),
       setConfig: (newConfig) => set((state) => ({ ...state, ...newConfig })),
       resetConfig: () => set(defaultConfig),
