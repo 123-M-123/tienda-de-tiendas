@@ -1,3 +1,4 @@
+// app/layout.tsx - FUSIÓN TOTAL BLINDADA (PBC)
 import type { Metadata, Viewport } from "next"
 import { Suspense } from "react" 
 import Script from "next/script"
@@ -34,10 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: config?.metaDesc || "Creamos tiendas online simples, rápidas y sin comisiones mensuales.",
     metadataBase: new URL("https://tienda-de-tiendas.vercel.app"),
     manifest: "/manifest.json",
-    icons: {
-      icon: "/favicon.png",
-      apple: "/icon-192.png",
-    },
+    icons: { icon: "/favicon.png", apple: "/icon-192.png" },
     openGraph: {
       title: title,
       description: config?.metaDesc,
@@ -47,7 +45,6 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "es_AR",
       type: "website",
     },
-    // 🛡️ TWITTER METADATA - RECUPERADO
     twitter: {
       card: "summary_large_image",
       title: title,
@@ -59,9 +56,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList = headers();
+  // 🚩 AISLAMIENTO RADICAL: Detectamos si la URL es estrictamente /preview
   const path = headersList.get("x-invoke-path") || "";
-  const referer = headersList.get("referer") || "";
-  const isPreview = path.includes('/preview') || referer.includes('/preview');
+  const isPreview = path === '/preview' || path.startsWith('/preview/');
 
   return (
     <html lang="es" translate="no">
@@ -81,7 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
-        {/* 🛡️ GOOGLE ANALYTICS SCRIPTS - RECUPERADO */}
+        {/* 🛡️ GOOGLE ANALYTICS SCRIPTS - RECUPERADO COMPLETO */}
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
         <Script id="ga-init" strategy="afterInteractive">
           {`
@@ -95,6 +92,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <DynamicStyles />
+        
+        {/* 🛡️ EL MURO: Si es preview, no existe ni el Header ni el Footer oficial */}
         {!isPreview ? (
           <>
             <Suspense fallback={<div className="h-20 bg-black w-full" />}>
@@ -106,6 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ) : (
           <main>{children}</main>
         )}
+        
         <Analytics />
       </body>
     </html>
